@@ -1,0 +1,15 @@
+/*
+	Compresses an array of longs into a corresponding array of ints.
+*/
+
+	int[] compress_longs( long[] p )
+	{
+		long[] copy = new long[p.length];
+		for( int i = 0; i < copy.length; i++ ) copy[i] = p[i];
+		Arrays.sort( copy );
+		TreeMap<Long,Integer> lookup = new TreeMap<Long,Integer>();
+		for( int i = 0; i < p.length; i++ ) if( !lookup.containsKey( copy[i] ) ) lookup.put( copy[i], i );
+		int ans[] = new int[p.length];
+		for( int i = 0; i < p.length; i++ ) ans[i] = lookup.get( p[i] );
+		return ans;
+	}
