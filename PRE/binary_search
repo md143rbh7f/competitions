@@ -1,0 +1,13 @@
+/*
+	Template for binary search.
+*/
+
+	// maximise: ans starts at 0, moves up
+	int del = 1 << ;
+	int ans = 0;
+	// binary search
+	while( del != 0 )
+	{
+		if( works( ans + del ) ) ans += del; // maximise
+		del >>>= 1;
+	}
