@@ -1,0 +1,15 @@
+	// implements Heron's method to find square root of a BigInteger
+	static BigInteger sqrt( BigInteger n )
+	{
+		int d = n.bitLength();
+		BigInteger x = BigInteger.ONE.shiftLeft( d >> 1 );
+		BigInteger y = n.divide( x );
+		BigInteger diff = x.subtract( y ).abs();
+		while( !( diff.equals( BigInteger.ZERO ) || diff.equals( BigInteger.ONE ) ) )
+		{
+			x = x.add( y ).shiftRight( 1 );
+			y = n.divide( x );
+			diff = x.subtract( y ).abs();
+		}
+		return x;
+	}
