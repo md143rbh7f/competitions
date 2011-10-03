@@ -1,0 +1,95 @@
+/*
+Knuth-Morris-Pratt String Searching Algorithm
+
+Given strings S and T, the KMP algorithm returns the first index in S where T is found (or -1 if it's not possible).
+
+The KMP algorithm runs in O( len(S) + len(T) ) time (as opposed to O( len(S) * len(T) ) for the naive algorithm).
+
+The failure function F(L) is the length of the longest prefix of T that is also a suffix of T[ 0, ..., L-1 ].
+*/
+
+// BEGIN C++
+
+int f[];
+
+void failure_fn( string t )
+{
+	f[0] = f[1] = 0;
+	for( int i = 2; i <= t.size(); i++ )
+	{
+		int j = f[i-1];
+		f[i] = 0;
+		do
+		{
+			if( t[j] == t[i-1] )
+			{
+				f[i] = j+1;
+				break;
+			}
+			j = f[j];
+		}
+		while(j);
+	}
+}
+
+int kmp( string s, string t )
+{
+	int i = 0, j = 0;
+	failure_fn(t);
+	while( i+j < s.size() )
+	{
+		if( j == t.size() ) return i;
+		if( s[i+j] == t[j] ) j++;
+		else if(j)
+		{
+			i += j - f[j];
+			j = f[j];
+		}
+		else i++;
+	}
+	return -1;
+}
+
+// END C++
+
+// BEGIN JAVA
+
+	static int[] failure_fn( String t )
+	{
+		int f[] = new int[t.length()+1];
+		for( int i = 2; i <= t.length(); i++ )
+		{
+			int j = f[i-1];
+			do
+			{
+				if( t.charAt(j) == t.charAt(i-1) )
+				{
+					f[i] = j+1;
+					break;
+				}
+				j = f[j];
+			}
+			while( j > 0 );
+		}
+		return f;
+	}
+
+	static int kmp( String s, String t )
+	{
+		int i = 0, j = 0;
+		int f[] = failure_fn(t);
+		while( i+j < s.length() )
+		{
+			if( j == t.length() ) return i;
+			if( s.charAt(i+j) == t.charAt(j) ) j++;
+			else if( j > 0 )
+			{
+				i += j - f[j];
+				j = f[j];
+			}
+			else i++;
+		}
+		return -1;
+	}
+
+// END JAVA
