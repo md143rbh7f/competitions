@@ -1,0 +1,35 @@
+/*
+	Template for Dijkstra's algorithm.
+*/
+
+	static int[] dijkstra( int[][] g, int start )
+	{
+		int[] d = new int[g.length];
+		for( int i = 0; i < g.length; i++ ) d[i] = INF;
+		d[start] = 0;
+		TreeSet<Integer> q = new TreeSet<Integer>( new DistanceComparator( d ) );
+		q.add( start );
+		while( !q.isEmpty() )
+		{
+			int v = q.poll();
+			for( int c = 0; c < g.length; c++ ) if( d[c] > d[v]+g[v][c] )
+			{
+				d[c] = d[v]+g[v][c];
+				q.remove( c );
+				q.add( c );
+			}
+		}
+		return d;
+	}
+
+	class DistanceComparator implements Comparator<Integer>
+	{
+		int[] d;
+		DistanceComparator( int[] _d ) { d = _d; }
+		public int compare( Integer a, Integer b )
+		{
+			if( d[a] > d[b] ) return 1;
+			if( d[a] < d[b] ) return -1;
+			return 0;
+		}
+	}
