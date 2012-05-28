@@ -1,0 +1,179 @@
+/*
+Description:
+We present several algorithms which solve the least common ancestor problem.
+
+
+Method 1: Precomputing ancestors by powers of 2
+O(N log N) preprocessing time
+O(log N) time per query
+O(N log N) memory
+
+Pro: Easy to code.
+Con: Larger memory requirement.
+
+
+Method 2: Use range queries
+O(N) preprocessing time
+O(log N) time per query
+O(N) memory
+
+Pro: Time- and memory-efficient.
+Con: Tricky to code: need to mess around with array lengths and other things.
+
+
+Method 3: Offline algorithm using union-find (Tarjan's algorithm)
+O(Q + N a(N)) total time amortised
+O(N) memory
+(Note: a(N) is the extremely slow growing inverse Ackermann function, which we
+can take to be constant for all reasonable values of N.)
+
+Pro: Extremely time- and memory-efficient. Easy to code.
+Con: The algorithm is offline, so you need to know all the queries in advance.
+*/
+
+
+/*
+Method 1: Precomputing ancestors by powers of 2
+The main idea is to define p[i][v] to be the 2^i-th parent of node v.
+Precomputation is a simple DP, and queries use binary search.
+
+Here POW is taken such that 2^POW is the maximum depth of the tree.
+
+To initialise the structure, you should call preprocess( root ).
+*/
+
+int p[POW][N], * par = p[0], d[N];
+vector<int> g[N];
+
+void preprocess( int v )
+{
+	for( int i = 1; i < POW; i++ ) p[i][v] = p[i-1][p[i-1][v]];
+	for( int i = 0; i < g[v].size(); i++ )
+	{
+		int u = g[v][i];
+		if( u == par[v] ) continue;
+		par[v] = v;
+		d[u] = d[v] + 1;
+		preprocess(u);
+	}
+}
+
+int lca( int a, int b )
+{
+	if( d[a] > d[b] ) a ^= b, b ^= a, a ^= b;
+	if( d[a] < d[b] )
+	{
+		int del = d[b] - d[a];
+		for( int i = 0; i < POW; i++ ) if( del & ( 1 << i ) ) b = p[i][b];
+	}
+	if( a != b )
+	{
+		for( int i = POW-1; i >= 0; i-- ) if( p[i][a] != p[i][b] ) a = p[i][a], b = p[i][b];
+		a = par[a], b = par[b];
+	}
+	return a;
+}
+
+
+
+/*
+Method 2: Using range queries
+Consider a preorder traversal of the tree as in the dfs() routine below. If the
+Then the lowest common ancestor of a and b is the node with minimum depth that
+appears in the preorder traversal between index[a] and index[b]. This turns the
+lowest common ancestor problem into a range query problem.
+
+N should be a power of two for safety reasons.
+*/
+
+int n, d[N+1], index[N], tree[4*N], del, T;
+vector<int> g[N];
+
+void dfs( int v )
+{
+	index[v] = del+T;
+	tree[del+T] = v;
+	T++;
+	for( int i = 0; i < g[v].size(); i++ )
+	{
+		int u = g[v][i];
+		if( d[u] ) continue;
+		d[u] = d[v] + 1;
+		dfs(u);
+		tree[del+T] = v;
+		T++;
+	}
+}
+
+void preprocess( int root )
+{
+	del = 1;
+	int m = 2 * ( n - 1 );
+	while( del < m ) del *= 2;
+
+	d[root] = 1, d[N] = N;
+	dfs(root);
+	for( ; T < del; T++ ) tree[del+T] = N;
+
+	for( int x = del - 1; x; x-- )
+	{
+		int y = tree[2*x], z = tree[2*x+1];
+		tree[x] = d[y] < d[z] ? y : z;
+	}
+}
+
+int lca( int a, int b )
+{
+	int ans = N;
+	if( index[a] > index[b] ) a ^= b, b ^= a, a ^= b;
+	for( int i = index[a], j = index[b]; i <= j; i = ( i + 1 ) / 2, j = ( j - 1 ) / 2 )
+	{
+		if( i % 2 == 1 && d[tree[i]] < d[ans] ) ans = tree[i];
+		if( j % 2 == 0 && d[tree[j]] < d[ans] ) ans = tree[j];
+	}
+	return ans;
+}
+
+
+
+/*
+Method 3: Offline algorithm using union-find (Tarjan's algorithm)
+We use a union-find data structure in our dfs to maintain the lowest ancestor
+for any given node during our traversal. Specifically, whenever dfs(v) is
+called, then if done[u] is true, then pred[find(u)] stores the LCA of u and v.
+
+Notes:
+- q[v] contains u if and only if there is a query (v,u).
+- d[root] should be set to 1.
+- Call dfs( root ) to run the queries.
+
+Union-find code can be found elsewhere.
+*/
+
+int d[N], p[N], pred[N];
+vector<int> g[N], q[N];
+bool done[N];
+
+void dfs( int v )
+{
+	p[v] = -1;
+	pred[v] = v;
+	for( int i = 0; i < g[v].size(); i++ )
+	{
+		int u = g[v][i];
+		if( d[u] ) continue;
+		d[u] = d[v] + 1;
+		dfs(u);
+		merge( u, v );
+		pred[find(v)] = v;
+	}
+	done[v] = true;
+
+	for( int i = 0; i < q[v].size(); i++ )
+	{
+		int u = q[v][i];
+		if( !done[u] ) continue;
+		int lca = pred[find(u)];
+		// At this point, lca is the least common ancestor of u and v.
+	}
+}
