@@ -1,0 +1,6 @@
+This library is a work in progress and I don't recommend that people use in it without having a general idea of what it does.
+
+To refactor:
+- mod_pow / mod_inverse / number theory (C++, Java)
+- geom / convex hull (C++, Java)
+- Tarjan / Kosaraju (C++, Java)

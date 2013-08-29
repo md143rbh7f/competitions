@@ -1,0 +1,24 @@
+/*
+	Sieve of Eratosthenes
+*/
+
+static boolean[] sieve( int n )
+{
+	boolean[] ans = new boolean[n+1];
+	for( int i = 2; i <= n; i++ ) ans[i] = true;
+	for( int i = 2; i < Math.ceil(Math.sqrt(n)); i++ )
+		if( ans[i] )
+			for( int j = 2*i; j <= n; j += i )
+				ans[j] = false;
+	return ans;
+}
+
+static int[] primes( int n )
+{
+	boolean[] s = sieve(n);
+	int l = 0;
+	for( int i = 2; i < s.length; i++ ) if( s[i] ) l++;
+	int[] ans = new int[l]; int j = 0;
+	for( int i = 2; i < s.length; i++ ) if( s[i] ) ans[j++] = i;
+	return ans;
+}

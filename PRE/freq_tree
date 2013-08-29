@@ -1,0 +1,102 @@
+/*
+Warnings before you copy/paste this code:
+- Indices are 1-based.
+
+Description:
+Suppose we wish to store a frequency table freq(i), where i is some integer
+between 1 and N, inclusive. A Fenwick tree is a data structure which allows us
+to perform the following operations in O(log N) time:
+- add x to freq(i)
+- compute freq(1) + freq(2) + ... + freq(i), the cumulative frequency of i.
+- compute freq(i)
+Additionally, you can simply implement the following functions:
+- find the last i such that cum_freq(x) < t (assuming freq(j) >= 0 for all j)
+- scale all frequencies by a constant
+- extend the frequency tree to higher dimensions
+
+Implementation:
+Fenwick trees are implemented via a technique called BINARY INDEXING. The
+reason for this name will become clear in a moment.
+
+Consider some positive integer x. Define the PREDECESSOR of x to be x minus the
+last nonzero bit of x. Similarly, we define the PARENT of x in the Fenwick tree
+to be x plus the last nonzero bit of x. For example:
+
+x (binary):				predecessor (binary):			parent (binary):
+1<<n					0								1<<(n+1)
+3 (11)					2 (10)							4 (100)
+5 (101)					4 (100)							6 (110)
+12 (1100)				8 (1000)						16 (10000)
+42 (101010)				40 (101000)						44 (101100)
+
+If the Fenwick tree is of size N, then it should be clear that each integer in
+the tree has at most O(log N) predecessors and parents.
+
+Using bit operations, the predecessor of x is x&(x-1), and the parent of x is
+(x|(x-1))+1. Another way to compute the predecessor and the parent is to
+compute the last bit: x&(-x). Then
+	x -= x&(-x);
+moves x to its predecessor, and
+	x += x&(-x);
+moves x to its parent.
+
+We store an array tree[x], where
+	tree[x] = freq[y+1] + freq[y+2] + ... + freq[x]
+where y is the predecessor of x. Then
+	cum_freq(x) = tree[x] + cum_freq(y)
+This computes cumulative frequency in O(log N) time.
+
+We can also show the following:
+	tree[x] = sum( tree[z], where z is a child of x )
+This allows us to update freq(x) and tree[x] in O(log N) time also.
+
+See implementation for more details about the other functions.
+
+Links:
+http://en.wikipedia.org/wiki/Fenwick_tree
+http://community.topcoder.com/tc?module=Static&d1=tutorials&d2=binaryIndexedTrees
+*/
+
+// REMEMBER: INDICES ARE 1-BASED.
+int tree[N+1];
+
+// emulates freq[x] += amt
+void add( int x, int amt )
+{
+	for( ; x <= N; x += x&(-x) ) tree[x] += amt;
+}
+
+// computes sum( freq[i] ), where 1 <= i <= x
+int cum_freq( int x )
+{
+	int ans = 0;
+	for( ; x; x -= x&(-x) ) ans += tree[x];
+	return ans;
+}
+
+// emulates freq[x]
+int freq( int x )
+{
+	int ans = tree[x], end = x - (x&(-x));
+	for( x--; x > end; x -= x&(-x) ) ans -= tree[x];
+	return ans;
+}
+
+// find last x such that cum_freq(x) < cf
+int find( int cf )
+{
+	int ans = 0, del = 0;
+	for( ans = N>>1; ans; ans >>= 1 ) del <<= 1;
+	for( ans = 0; del; del >>= 1 ) if( ans+del <= N && tree[ans+del] < cf )
+	{
+		ans += del;
+		cf -= tree[ans];
+	}
+	return ans;
+}
+
+// scale everything by c
+void scale( int c )
+{
+	for( int i = 1; i <= N; i++ ) tree[i] *= c;
+}

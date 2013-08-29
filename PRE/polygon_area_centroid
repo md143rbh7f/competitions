@@ -1,0 +1,34 @@
+/*
+	Calculates the area and centroid of the polygon given by x, y.
+*/
+
+	static double polygon_area( double[] x, double[] y )
+	{
+		double a = 0;
+		for( int i = 1; i < x.length; i++ ) a += x[i-1]*y[i] - x[i]*y[i-1];
+		a += x[x.length-1]*y[0] - x[0]*y[x.length-1];
+		a /= 2;
+		if( a < 0 ) a = -a;
+		return a;
+	}
+
+	static double[] polygon_area_centroid( double[] x, double[] y )
+	{
+		double[] a = new double[3];
+		int n = x.length;
+		double cross;
+		for( int i = 1; i < x.length; i++ )
+		{
+			cross = x[i-1]*y[i] - x[i]*y[i-1];
+			a[0] += cross;
+			a[1] += cross*(x[i-1]+x[i]); a[2] += cross*(y[i-1]+y[i]);
+		}
+		cross = x[n-1]*y[0] - x[0]*y[n-1];
+		a[0] += cross;
+		a[0] /= 2;
+		if( a[0] < 0 ) a[0] *= -1;
+		a[1] += cross*(x[n]+x[0]); a[2] += cross*(y[n]+y[0]);
+		a[1] /= 6*a[0]; a[2] /= 6*a[0];
+
+		return a;
+	}

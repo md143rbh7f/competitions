@@ -1,0 +1,8 @@
+	class Pair<X,Y>
+	{
+		X x; Y y;
+		public Pair( X _x, Y _y )
+		{ x = _x; y = _y; }
+		public String toString()
+		{ return "<"+x+","+y+">"; }
+	}

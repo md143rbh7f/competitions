@@ -1,0 +1,165 @@
+/*
+	Kosaraju's and Tarjan's algorithms for finding strongly connected components.
+	(Note: Tarjan's needs to be rewritten at some point.)
+*/
+
+// BEGIN KOSARAJU'S (C++)
+
+vector<int> g[MAX], h[MAX]; // graph, reverse graph
+int n, c[MAX], nc, q[MAX], nq; // num nodes, component map, num components, queue, queue index
+bool seen[MAX];
+
+void dfs1( int x )
+{
+	if(seen[x]) return;
+	seen[x] = true;
+	rep(y,g[x].size()) dfs1(g[x][y]);
+	q[nq++] = x;
+}
+
+void dfs2( int x )
+{
+	if(c[x]>-1) return;
+	c[x] = nc;
+	rep(y,h[x].size()) dfs2(h[x][y]);
+}
+
+	nq = 0;
+	rep(i,n) seen[i] = false;
+	rep(i,n) dfs1(i);
+
+	nc = 0;
+	rep(i,n) c[i] = -1;
+	for( int i = n-1; i >= 0; i-- ) if(c[q[i]]==-1)
+	{
+		dfs2(q[i]);
+		nc++;
+	}
+
+// END KOSARAJU'S (C++)
+
+// BEGIN KOSARAJU'S (Java)
+
+	boolean seen[];
+	LinkedList<Integer> g[], h[]; // graph, reverse graph
+	int q[], nq, c[], nc; // queue, queue index, component map, num components
+
+	void dfs1( int x )
+	{
+		if( seen[x] ) return;
+		seen[x] = true;
+		for( int y : g[x] ) dfs1(y);
+		q[nq++] = x;
+	}
+
+	void dfs2( int x )
+	{
+		if( c[x] > -1 ) return;
+		c[x] = nc;
+		for( int y : h[x] ) dfs2(y);
+	}
+
+		nq = 0;
+		q = new int[n];
+		seen = new boolean[n];
+		for( int i = 0; i < n; i++ ) dfs1(i);
+
+		nc = 0;
+		c = new int[n];
+		Arrays.fill( c, -1 );
+		for( int i = n-1; i >= 0; i-- ) if( c[q[i]] == -1 )
+		{
+			dfs2(q[i]);
+			nc++;
+		}
+
+// END KOSARAJU'S (Java)
+
+
+	/*
+	 * WARNING: Tarjan's needs to be rewritten --- use at your own risk!
+	 */
+
+	int[] tarjan( int[][] g )
+	{
+		int n = g.length, t = 0, in[] = new int[n], min[] = new int[n], comp[] = new int[n], dfs[] = new int[n], sp = 0, stack[] = new int[n], sp2 = 0, v, c, step[] = new int[n];
+		boolean[] onstack = new boolean[n];
+		for( int i = 0; i < n; i++ ) comp[i] = i;
+		for( int i = 0; i < n; i++ )
+			if( min[i] == 0 )
+			{
+				dfs[sp=0] = i;
+				DFS: while( sp != -1 )
+				{
+					v = dfs[sp];
+					if( in[v] == 0 )
+					{
+						in[v] = min[v] = ++t;
+						stack[sp2++] = v;
+						onstack[v] = true;
+					}
+					while( step[v] < g[v].length )
+					{
+						c = g[v][step[v]];
+						if( in[c] == 0 )
+						{
+							dfs[++sp] = c;
+							continue DFS;
+						}
+						if( onstack[c] && min[c] < min[v] ) min[v] = min[c];
+						stack[v]++;
+					}
+					if( min[v] == in[v] ) do
+					{
+						comp[c=stack[--sp2]] = comp[v];
+						onstack[c] = false;
+					}
+					while( c != v );
+					sp--;
+				}
+			}
+		return comp;
+	}
+
+	int[] tarjan( LinkedList<Integer>[] g )
+	{
+		int n = g.length, t = 0, in[] = new int[n], min[] = new int[n], comp[] = new int[n], dfs[] = new int[n], sp = 0, stack[] = new int[n], sp2 = 0, v, c;
+		boolean[] onstack = new boolean[n];
+		ListIterator<Integer>[] step = (ListIterator<Integer>[])(new ListIterator[n]);
+		for( int i = 0; i < n; i++ ) comp[i] = i;
+		for( int i = 0; i < n; i++ )
+			if( min[i] == 0 )
+			{
+				dfs[sp=0] = i;
+				DFS: while( sp != -1 )
+				{
+					v = dfs[sp];
+					if( in[v] == 0 )
+					{
+						in[v] = min[v] = ++t;
+						stack[sp2++] = v;
+						onstack[v] = true;
+						step[v] = (ListIterator<Integer>)g[v].listIterator();
+					}
+					while( step[v].hasNext() )
+					{
+						c = step[v].next();
+						if( in[c] == 0 )
+						{
+							step[v].previous();
+							dfs[++sp] = c;
+							continue DFS;
+						}
+						if( onstack[c] && min[c] < min[v] ) min[v] = min[c];
+					}
+					if( min[v] == in[v] ) do
+					{
+						comp[c=stack[--sp2]] = comp[v];
+						onstack[c] = false;
+					}
+					while( c != v );
+					sp--;
+				}
+			}
+		return comp;
+	}

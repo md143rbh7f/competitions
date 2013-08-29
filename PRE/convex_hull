@@ -1,0 +1,70 @@
+	/*
+		implements Graham scan for a set of points;
+		outputs points on convex hull in counterclockwise order,
+		starting with the point in the leftmost, lowest point, e.g.,
+		the point with lowest y coord, then lowest x coord
+	*/
+
+	static ArrayList<double[]> convex_hull( double[][] pts )
+	{
+		int n = pts.length;
+		// find starting pt
+		double[] start = pts[0];
+		for( int i = 0; i < n; i++ )
+			if( (pts[i][1]<start[1]) || (pts[i][1]==start[1]&&pts[i][0]<start[0]) )
+				start = pts[i];
+		// sort by angle, then by distance, against starting point
+		Integer[] ptr = new Integer[n+1];
+		for( int i = 0; i < n; i++ ) ptr[i] = i;
+		double[] a = new double[n], d = new double[n];
+		for( int i = 0; i < n; i++ )
+		{
+			a[i] = Math.atan2( pts[i][1] - start[1], pts[i][0] - start[0] );
+			d[i] = Math.hypot( start[0] - pts[i][0], start[1] - pts[i][1] );
+		}
+		Arrays.sort( ptr, 0, n, new AngleComparator( a, d ) );
+		ptr[n] = ptr[0];
+		// check counterclockwise turning ( turn(a,b,c) > 1 )
+		ArrayList<double[]> h = new ArrayList<double[]>();
+		h.add(pts[ptr[0]]);
+		h.add(pts[ptr[1]]);
+		int last = 1;
+		for( int i = 2; i <= n; i++ )
+		{
+			while( true )
+			{
+				double t = turn( h.get(last-1), h.get(last), pts[ptr[i]] );
+				if( t<0 || (t*t)<EPS )
+				{
+					h.remove(last);
+					last--;
+				}
+				else break;
+				if( last==0 ) break;
+			}
+			last++;
+			h.add(pts[ptr[i]]);
+		}
+		h.remove(last);
+		// last case: if the entire thing was just a line
+		if( h.size()==1 ) h.add(pts[ptr[n-1]]);
+		return h;
+	}
+
+	static class AngleComparator implements Comparator<Integer>
+	{
+		double[] a, d;
+		AngleComparator( double[] _a, double[] _d )
+		{ a = _a; d = _d; }
+		public int compare( Integer x, Integer y )
+		{
+			if( a[x] > a[y] ) return 1;
+			if( a[x] < a[y] ) return -1;
+			if( d[x] > d[y] ) return 1;
+			if( d[x] < d[y] ) return -1;
+			return 0;
+		}
+	}
+
+	static double turn( double[] a, double[] b, double[] c )
+	{ return (b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]); }
