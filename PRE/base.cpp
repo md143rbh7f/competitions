@@ -10,6 +10,7 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <map>
 #include <numeric>
@@ -23,7 +24,9 @@
 
 using namespace std;
 
+typedef long long ll;
 typedef vector<int> vi;
+typedef vector<ll> vll;
 typedef vector<string> vs;
 typedef pair<int,int> pii;
 #define iter(i,a,b,c) for(auto i=(a);i c(b);i++)
