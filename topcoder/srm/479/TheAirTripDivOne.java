@@ -44,8 +44,8 @@ public class TheAirTripDivOne
 					long t1 = depart + dt;
 					if( t1<d[b] )
 					{
-						d[b] = t1;
 						pq.remove(b);
+						d[b] = t1;
 						pq.add(b);
 					}
 				}

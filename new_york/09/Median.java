@@ -52,7 +52,7 @@ public class Median
 					l.add(b);
 				}
 			}
-			rystem.out.print( ( i%10 == 0 ? "\n" : " " ) + med );
+			System.out.print( ( i%10 == 0 ? "\n" : " " ) + med );
 		}
 		System.out.println();
 	}
