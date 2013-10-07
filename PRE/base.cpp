@@ -35,7 +35,6 @@ typedef pair<int,int> pii;
 #define APP(f,...) f(__VA_ARGS__)
 #define foreach(i,c) APP(iter,i,all(c),!=)
 #define all(c) begin(c),end(c)
-#define mp(a,b) make_pair((a),(b))
 #define CLR(i,x) memset(i,x,sizeof(i))
 #define clr(i) CLR(i,0)
 #define M(x) ((x)%MOD)

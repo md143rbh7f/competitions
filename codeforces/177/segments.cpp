@@ -13,7 +13,6 @@ int main()
 		cin >> a >> b;
 		tot += b - a + 1;
 	}
-	tot %= k;
-	cout << (tot ? k - tot : 0) << endl;
+	cout << ((k - (tot % k)) % k) << endl;
 	return 0;
 }
