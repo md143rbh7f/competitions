@@ -5,9 +5,7 @@ public class FoxAndGo3
 {
 	int x, y, n, m, INF = 12345;
 	int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
-	ArrayList<Integer>[] g;
-	int[][] cap;
-	int[][] flow;
+	ArrayList<Edge>[] g;
 	boolean[] seen;
 
 	int id(int i, int j)
@@ -21,9 +19,7 @@ public class FoxAndGo3
 		y = b[0].length();
 		n = x * y + 2;
 		g = new ArrayList[n];
-		for(int i = 0; i < n; i++) g[i] = new ArrayList<Integer>();
-		cap = new int[n][n];
-		flow = new int[n][n];
+		for(int i = 0; i < n; i++) g[i] = new ArrayList<Edge>();
 		seen = new boolean[n];
 		int m = 0;
 		for(int i = 0; i < x; i++) for(int j = 0; j < y; j++)
@@ -52,35 +48,49 @@ public class FoxAndGo3
 
 	void addEdge(int i, int j, int c)
 	{
-		g[i].add(j);
-		g[j].add(i);
-		cap[i][j] = c;
+		Edge e = new Edge(j, c), f = new Edge(i, 0);
+		e.r = f;
+		f.r = e;
+		g[i].add(e);
+		g[j].add(f);
+	}
+
+	class Edge
+	{
+		int j, c, f;
+		Edge r;
+
+		Edge(int j, int c)
+		{
+			this.j = j;
+			this.c = c;
+		}
 	}
 
 	int maxFlow(int s, int t)
 	{
 		do Arrays.fill(seen, false);
 		while(maxFlowDFS(s, t, INF) > 0);
-		int max = 0;
-		for(int i = 0; i < n; i++) max += flow[i][t];
-		return max;
+		int ans = 0;
+		for(Edge e : g[s]) ans += e.f;
+		return ans;
 	}
 
-	int maxFlowDFS(int s, int t, int minflow)
+	int maxFlowDFS(int s, int t, int minFlow)
 	{
-		if(s == t) return minflow;
+		if(s == t) return minFlow;
 		if(seen[s]) return 0;
 		seen[s] = true;
-		for(int i : g[s])
+		for(Edge e : g[s])
 		{
-			if(cap[s][i] == flow[s][i]) continue;
-			int minflow2 = Math.min(minflow, cap[s][i] - flow[s][i]);
-			minflow2 = Math.min(minflow2, maxFlowDFS(i, t, minflow2));
-			if(minflow2 > 0)
+			if(e.c == e.f) continue;
+			int minFlow2 = Math.min(minFlow, e.c - e.f);
+			minFlow2 = Math.min(minFlow2, maxFlowDFS(e.j, t, minFlow2));
+			if(minFlow2 > 0)
 			{
-				flow[s][i] += minflow2;
-				flow[i][s] -= minflow2;
-				return minflow2;
+				e.f += minFlow2;
+				e.r.f -= minFlow2;
+				return minFlow2;
 			}
 		}
 		return 0;

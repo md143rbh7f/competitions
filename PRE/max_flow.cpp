@@ -2,31 +2,42 @@
 	C++ implementations of Ford-Fulkerson and Edmonds-Karp.
 */
 
-vi g[N];
-int cap[N][N];
-int flow[N][N];
+struct edge
+{
+	int j, c, f;
+	edge * r;
+};
+
+vector<edge*> g[N];
+int n;
+
+void add_edge(int i, int j, int c = 1)
+{
+	edge* e = new edge{j, c, 0, 0}, *f = new edge{i, 0, 0, 0};
+	e->r = f, f->r = e;
+	g[i].push_back(e), g[j].push_back(f);
+}
 
 // Edmonds-Karp
-int pre[N];
+edge* pre[N];
 
 int bfs(int s, int t)
 {
 	list<int> q;
-	pre[s] = -2;
 	q.push_back(s);
 	while(!q.empty())
 	{
 		int i = *q.begin();
 		q.pop_front();
-		for(auto j : g[i]) if(cap[i][j] > flow[i][j] && pre[j] == -1)
-			pre[j] = i, q.push_back(j);
+		for(auto e : g[i]) if(e->c > e->f && e->j != s && !pre[e->j])
+			pre[e->j] = e, q.push_back(e->j);
 	}
-	if(pre[t] == -1) return 0;
-	int ans = cap[pre[t]][t] - flow[pre[t]][t];
-	for(int v = t; pre[v] >= 0; v = pre[v])
-		ans = min(ans, cap[pre[v]][v] - flow[pre[v]][v]);
-	for(int v = t; pre[v] >= 0; v = pre[v])
-		flow[pre[v]][v] += ans, flow[v][pre[v]] -= ans;
+	if(!pre[t]) return 0;
+	int ans = INF;
+	for(int v = t; pre[v]; v = pre[v]->r->j)
+		ans = min(ans, pre[v]->c - pre[v]->f);
+	for(int v = t; pre[v]; v = pre[v]->r->j)
+		pre[v]->f += ans, pre[v]->r->f -= ans;
 	return ans;
 }
 
@@ -38,33 +49,28 @@ int dfs(int s, int t, int minf)
 	if(s == t) return minf;
 	if(seen[s]) return 0;
 	seen[s] = true;
-	for(auto i : g[s])
+	for(auto e : g[s]) if(e->c > e->f)
 	{
-		if(cap[s][i] == flow[s][i]) continue;
-		int minf2 = min(minf, cap[s][i] - flow[s][i]);
-		minf2 = min(minf2, dfs(i, t, minf2));
+		int minf2 = min(minf, e->c - e->f);
+		minf2 = min(minf2, dfs(e->j, t, minf2));
 		if(minf2)
 		{
-			flow[s][i] += minf2, flow[i][s] -= minf2;
+			e->f += minf2, e->r->f -= minf2;
 			return minf2;
 		}
 	}
 	return 0;
 }
 
-void add_edge(int i, int j, int c = 1)
-{
-	g[i].push_back(j), g[j].push_back(i), cap[i][j] = c;
-}
-
 int max_flow(int s, int t)
 {
-	clr(f);
-	do rep(i,n) pre[i] = -1;
+	do clr(pre);
 	while(bfs(s, t));
-	//do clr(seen);
-	//while(dfs(s, t, INF));
+	/*
+	do clr(seen);
+	while(dfs(s, t, INF));
+	*/
 	int ans = 0;
-	rep(i,n) ans += flow[s][i];
+	for(auto e : g[s]) ans += e->f;
 	return ans;
 }

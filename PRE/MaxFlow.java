@@ -1,16 +1,29 @@
 /*
 	Java implementations of Ford-Fulkerson and Edmonds-Karp.
 */
-	ArrayList<Integer>[] g;
-	int[][] cap;
-	int[][] flow;
+	ArrayList<Edge>[] g;
 	int n;
+
+	class Edge
+	{
+		int i, j, c, f;
+		Edge r;
+
+		Edge(int i, int j, int c)
+		{
+			this.i = i;
+			this.j = j;
+			this.c = c;
+		}
+	}
 
 	void addEdge(int i, int j, int c)
 	{
-		g[i].add(j);
-		g[j].add(i);
-		cap[i][j] = c;
+		Edge e = new Edge(i, j, c), f = new Edge(j, i, 0);
+		e.r = f;
+		f.r = e;
+		g[i].add(e);
+		g[j].add(f);
 	}
 
 	int maxFlow(int s, int t)
@@ -19,62 +32,60 @@
 		do Arrays.fill(seen, false);
 		while(maxFlowDFS(s, t, INF) > 0);
 		*/
-		do Arrays.fill(prev, -1);
-		while(maxFlowBFS(cap, flow, prev, s, t, INF ) > 0);
-		int max = 0;
-		for(int i = 0; i < n; i++) max += flow[i][t];
-		return max;
+		do Arrays.fill(pre, null);
+		while(maxFlowBFS(s, t) > 0);
+		int ans = 0;
+		for(Edge e : g[s]) ans += e.f;
+		return ans;
 	}
 
 	// Ford-Fulkerson
 	boolean[] seen;
 
-	int maxFlowDFS(int s, int t, int minflow)
+	int maxFlowDFS(int s, int t, int minFlow)
 	{
-		if(s == t) return minflow;
+		if(s == t) return minFlow;
 		if(seen[s]) return 0;
 		seen[s] = true;
-		for(int i : g[s])
+		for(Edge e : g[s])
 		{
-			if(cap[s][i] == flow[s][i]) continue;
-			int minflow2 = Math.min(minflow, cap[s][i] - flow[s][i]);
-			minflow2 = Math.min(minflow2, maxFlowDFS(i, t, minflow2));
-			if(minflow2 > 0)
+			if(e.c == e.f) continue;
+			int minFlow2 = Math.min(minFlow, e.c - e.f);
+			minFlow2 = Math.min(minFlow2, maxFlowDFS(e.j, t, minFlow2));
+			if(minFlow2 > 0)
 			{
-				flow[s][i] += minflow2;
-				flow[i][s] -= minflow2;
-				return minflow2;
+				e.f += minFlow2;
+				e.r.f -= minFlow2;
+				return minFlow2;
 			}
 		}
 		return 0;
 	}
 
 	// Edmonds-Karp
-	int[] prev;
+	Edge[] pre;
 
-	int maxFlowBFS(int s, int t, int minflow)
+	int maxFlowBFS(int s, int t)
 	{
 		LinkedList<Integer> q = new LinkedList<Integer>();
-		prev[s] = -2;
 		q.add(s);
 		while(!q.isEmpty())
 		{
 			int i = q.poll();
-			for(int j = 0; j < cap.length; j++)
-			if(cap[i][j] > flow[i][j] && prev[j] == -1)
+			for(Edge e : g[i]) if(e.c > e.f && e.j != s && pre[e.j] == null)
 			{
-				prev[j] = i;
-				q.add(j);
+				pre[e.j] = e;
+				q.add(e.j);
 			}
 		}
-		if(prev[t] == -1) return 0;
-		int ans = cap[prev[t]][t] - flow[prev[t]][t];
-		for(int v = t; prev[v] >= 0; v = prev[v])
-			ans = Math.min(ans, cap[prev[v]][v] - flow[prev[v]][v]);
-		for(int v = t; prev[v] >= 0; v = prev[v])
+		if(pre[t] == null) return 0;
+		int ans = INF;
+		for(int v = t; pre[v] != null; v = pre[v].r.j)
+			ans = Math.min(ans, pre[v].c - pre[v].f);
+		for(int v = t; pre[v] != null; v = pre[v].r.j)
 		{
-			flow[prev[v]][v] += ans;
-			flow[v][prev[v]] -= ans;
+			pre[v].f += ans;
+			pre[v].r.f -= ans;
 		}
 		return ans;
 	}
