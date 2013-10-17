@@ -1,17 +1,17 @@
 /*
 	Java implementations of Ford-Fulkerson and Edmonds-Karp.
 */
+
 	ArrayList<Edge>[] g;
 	int n;
 
 	class Edge
 	{
-		int i, j, c, f;
+		int j, c, f;
 		Edge r;
 
-		Edge(int i, int j, int c)
+		Edge(int j, int c)
 		{
-			this.i = i;
 			this.j = j;
 			this.c = c;
 		}
@@ -19,7 +19,7 @@
 
 	void addEdge(int i, int j, int c)
 	{
-		Edge e = new Edge(i, j, c), f = new Edge(j, i, 0);
+		Edge e = new Edge(j, c), f = new Edge(i, 0);
 		e.r = f;
 		f.r = e;
 		g[i].add(e);
@@ -29,9 +29,11 @@
 	int maxFlow(int s, int t)
 	{
 		/*
+		seen = new boolean[n];
 		do Arrays.fill(seen, false);
 		while(maxFlowDFS(s, t, INF) > 0);
 		*/
+		pre = new Edge[n];
 		do Arrays.fill(pre, null);
 		while(maxFlowBFS(s, t) > 0);
 		int ans = 0;
@@ -42,21 +44,21 @@
 	// Ford-Fulkerson
 	boolean[] seen;
 
-	int maxFlowDFS(int s, int t, int minFlow)
+	int maxFlowDFS(int s, int t, int mf)
 	{
-		if(s == t) return minFlow;
+		if(s == t) return mf;
 		if(seen[s]) return 0;
 		seen[s] = true;
 		for(Edge e : g[s])
 		{
 			if(e.c == e.f) continue;
-			int minFlow2 = Math.min(minFlow, e.c - e.f);
-			minFlow2 = Math.min(minFlow2, maxFlowDFS(e.j, t, minFlow2));
-			if(minFlow2 > 0)
+			int mf2 = Math.min(mf, e.c - e.f);
+			mf2 = Math.min(mf2, maxFlowDFS(e.j, t, mf2));
+			if(mf2 > 0)
 			{
-				e.f += minFlow2;
-				e.r.f -= minFlow2;
-				return minFlow2;
+				e.f += mf2;
+				e.r.f -= mf2;
+				return mf2;
 			}
 		}
 		return 0;
@@ -79,13 +81,13 @@
 			}
 		}
 		if(pre[t] == null) return 0;
-		int ans = INF;
-		for(int v = t; pre[v] != null; v = pre[v].r.j)
-			ans = Math.min(ans, pre[v].c - pre[v].f);
-		for(int v = t; pre[v] != null; v = pre[v].r.j)
+		int f = INF;
+		for(Edge e = pre[t]; e != null; e = pre[e.r.j])
+			f = Math.min(f, e.c - e.f);
+		for(Edge e = pre[t]; e != null; e = pre[e.r.j])
 		{
-			pre[v].f += ans;
-			pre[v].r.f -= ans;
+			e.f += f;
+			e.r.f -= f;
 		}
-		return ans;
+		return f;
 	}

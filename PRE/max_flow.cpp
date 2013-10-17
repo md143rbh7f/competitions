@@ -33,30 +33,30 @@ int bfs(int s, int t)
 			pre[e->j] = e, q.push_back(e->j);
 	}
 	if(!pre[t]) return 0;
-	int ans = INF;
-	for(int v = t; pre[v]; v = pre[v]->r->j)
-		ans = min(ans, pre[v]->c - pre[v]->f);
-	for(int v = t; pre[v]; v = pre[v]->r->j)
-		pre[v]->f += ans, pre[v]->r->f -= ans;
-	return ans;
+	int f = INF;
+	for(edge* e = pre[t]; e; e = pre[e->r->j])
+		f = min(f, e->c - e->f);
+	for(edge* e = pre[t]; e; e = pre[e->r->j])
+		e->f += f, e->r->f -= f;
+	return f;
 }
 
 // Ford-Fulkerson
 bool seen[N];
 
-int dfs(int s, int t, int minf)
+int dfs(int s, int t, int mf)
 {
-	if(s == t) return minf;
+	if(s == t) return mf;
 	if(seen[s]) return 0;
 	seen[s] = true;
 	for(auto e : g[s]) if(e->c > e->f)
 	{
-		int minf2 = min(minf, e->c - e->f);
-		minf2 = min(minf2, dfs(e->j, t, minf2));
-		if(minf2)
+		int mf2 = min(mf, e->c - e->f);
+		mf2 = min(mf2, dfs(e->j, t, mf2));
+		if(mf2)
 		{
-			e->f += minf2, e->r->f -= minf2;
-			return minf2;
+			e->f += mf2, e->r->f -= mf2;
+			return mf2;
 		}
 	}
 	return 0;

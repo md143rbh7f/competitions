@@ -3,10 +3,8 @@ import java.util.*;
 
 public class FoxAndGo3
 {
-	int x, y, n, m, INF = 12345;
+	int x, y, m, INF = 12345;
 	int[] dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
-	ArrayList<Edge>[] g;
-	boolean[] seen;
 
 	int id(int i, int j)
 	{
@@ -46,14 +44,8 @@ public class FoxAndGo3
 		return m - maxFlow(n - 2, n - 1);
 	}
 
-	void addEdge(int i, int j, int c)
-	{
-		Edge e = new Edge(j, c), f = new Edge(i, 0);
-		e.r = f;
-		f.r = e;
-		g[i].add(e);
-		g[j].add(f);
-	}
+	ArrayList<Edge>[] g;
+	int n;
 
 	class Edge
 	{
@@ -67,6 +59,15 @@ public class FoxAndGo3
 		}
 	}
 
+	void addEdge(int i, int j, int c)
+	{
+		Edge e = new Edge(j, c), f = new Edge(i, 0);
+		e.r = f;
+		f.r = e;
+		g[i].add(e);
+		g[j].add(f);
+	}
+
 	int maxFlow(int s, int t)
 	{
 		do Arrays.fill(seen, false);
@@ -76,21 +77,23 @@ public class FoxAndGo3
 		return ans;
 	}
 
-	int maxFlowDFS(int s, int t, int minFlow)
+	boolean[] seen;
+
+	int maxFlowDFS(int s, int t, int mf)
 	{
-		if(s == t) return minFlow;
+		if(s == t) return mf;
 		if(seen[s]) return 0;
 		seen[s] = true;
 		for(Edge e : g[s])
 		{
 			if(e.c == e.f) continue;
-			int minFlow2 = Math.min(minFlow, e.c - e.f);
-			minFlow2 = Math.min(minFlow2, maxFlowDFS(e.j, t, minFlow2));
-			if(minFlow2 > 0)
+			int mf2 = Math.min(mf, e.c - e.f);
+			mf2 = Math.min(mf2, maxFlowDFS(e.j, t, mf2));
+			if(mf2 > 0)
 			{
-				e.f += minFlow2;
-				e.r.f -= minFlow2;
-				return minFlow2;
+				e.f += mf2;
+				e.r.f -= mf2;
+				return mf2;
 			}
 		}
 		return 0;
