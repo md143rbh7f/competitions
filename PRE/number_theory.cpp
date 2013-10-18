@@ -1,6 +1,6 @@
-int gcd( int a, int b )
+int gcd(int a, int b)
 {
-	while( b )
+	while(b)
 	{
 		int t = a % b;
 		a = b;
@@ -9,11 +9,11 @@ int gcd( int a, int b )
 	return a;
 }
 
-void extended_euclidean( int a, int b, int & lx, int & ly )
+void extended_euclidean(int a, int b, int & lx, int & ly)
 {
 	int x = 0, y = 1;
 	lx = 1, ly = 0;
-	while( b )
+	while(b)
 	{
 		int t = a % b, q = a / b;
 		a = b; b = t;
@@ -22,10 +22,10 @@ void extended_euclidean( int a, int b, int & lx, int & ly )
 	}
 }
 
-int mod_inv( int a, int m )
+int mod_inv(int a, int m)
 {
 	int lx, ly;
-	extended_euclidean( a, m, lx, ly );
-	if( lx < 0 ) lx += m;
+	extended_euclidean(a, m, lx, ly);
+	if(lx < 0) lx += m;
 	return lx;
 }
