@@ -1,3 +1,5 @@
+// alternatively, use __gcd (requires #include <algorithm>)
+
 int gcd(int a, int b)
 {
 	while(b)

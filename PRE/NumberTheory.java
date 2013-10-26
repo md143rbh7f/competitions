@@ -2,9 +2,9 @@
 
 // Euclidean algorithm
 // for BigIntegers, use BigInteger.gcd(...)
-static int gcd( int a, int b )
+static int gcd(int a, int b)
 {
-	while( b != 0 )
+	while(b != 0)
 	{
 		int t = a%b;
 		a = b;
@@ -15,10 +15,10 @@ static int gcd( int a, int b )
 
 // extended Euclidean algorithm
 // solves for (x,y) in Bezout's Identity: ax+by = gcd(a,b)
-static int[] extended_euclidean( int a, int b )
+static int[] extended_euclidean(int a, int b)
 {
 	int x = 0, lx = 1, y = 1, ly = 0;
-	while( b != 0 )
+	while(b != 0)
 	{
 		int t = a%b, q = a/b;
 		a = b; b = t;
@@ -29,9 +29,9 @@ static int[] extended_euclidean( int a, int b )
 }
 
 // uses extended Euclidean algorithm to calculate inverse of a modulo m
-static int modulo_inverse( int a, int m )
+static int modulo_inverse(int a, int m)
 {
 	int inv = extended_euclidean(a,m)[0];
-	if( inv<0 ) inv += m;
+	if(inv<0) inv += m;
 	return inv;
 }

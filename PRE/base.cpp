@@ -7,6 +7,7 @@
 #include <cstring>
 #include <ctime>
 #include <deque>
+#include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iostream>
@@ -36,6 +37,7 @@ typedef pair<int,int> pii;
 #define clr(i) CLR(i,0)
 #define M(x) ((x)%MOD)
 #define acc(f,x,y) x=f(x,y)
+template <typename T> T read_next(istream & is = cin) { T x; is >> x; return x; }
 
 ## if c
 int cases;
