@@ -37,7 +37,6 @@ typedef pair<int,int> pii;
 #define clr(i) CLR(i,0)
 #define M(x) ((x)%MOD)
 #define acc(f,x,y) x=f(x,y)
-template <typename T> T read_next(istream & is = cin) { T x; is >> x; return x; }
 
 ## if c
 int cases;
@@ -52,12 +51,10 @@ struct $NAME
 ## if t!
 int main()
 {
-##  if Q
-	ios_base::sync_with_stdio(0);
-##  endif
+	ios_base::sync_with_stdio(false);
 ##  if c
-	scanf( "%d", &cases );
-	for (int case_num = 1; i <= cases; case_num++)
+	scanf("%d", &cases);
+	for(int case_num = 1; i <= cases; case_num++)
 	{
 		
 	}
