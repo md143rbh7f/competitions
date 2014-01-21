@@ -1,5 +1,4 @@
 // alternatively, use __gcd (requires #include <algorithm>)
-
 int gcd(int a, int b)
 {
 	while(b)
@@ -30,4 +29,21 @@ int mod_inv(int a, int m)
 	extended_euclidean(a, m, lx, ly);
 	if(lx < 0) lx += m;
 	return lx;
+}
+
+ll mod_exp(ll a, ll b)
+{
+	if(!b) return 1;
+	if(b % 2) return M(a * mod_exp(M(a * a), b / 2));
+	return mod_exp(M(a * a), b / 2);
+}
+
+vll get_factors(ll n)
+{
+	vll ans;
+	ll f = 1;
+	for(; f * f < n; f++) if(!(n % f)) ans.push_back(f), ans.push_back(n / f);
+	if(f * f == n) ans.push_back(f);
+	sort(all(ans));
+	return ans;
 }
