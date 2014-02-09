@@ -2,24 +2,24 @@
 	C++ implementations of Ford-Fulkerson and Edmonds-Karp.
 */
 
-struct edge
+struct Edge
 {
 	int j, c, f;
-	edge * r;
+	Edge * r;
 };
 
-vector<edge*> g[N];
+vector<Edge*> g[N];
 int n;
 
-void add_edge(int i, int j, int c = 1)
+void add_Edge(int i, int j, int c = 1)
 {
-	edge* e = new edge{j, c, 0, 0}, *f = new edge{i, 0, 0, 0};
+	Edge* e = new Edge{j, c, 0, 0}, *f = new Edge{i, 0, 0, 0};
 	e->r = f, f->r = e;
 	g[i].push_back(e), g[j].push_back(f);
 }
 
 // Edmonds-Karp
-edge* pre[N];
+Edge* pre[N];
 
 int bfs(int s, int t)
 {
@@ -34,9 +34,9 @@ int bfs(int s, int t)
 	}
 	if(!pre[t]) return 0;
 	int f = INF;
-	for(edge* e = pre[t]; e; e = pre[e->r->j])
+	for(Edge* e = pre[t]; e; e = pre[e->r->j])
 		f = min(f, e->c - e->f);
-	for(edge* e = pre[t]; e; e = pre[e->r->j])
+	for(Edge* e = pre[t]; e; e = pre[e->r->j])
 		e->f += f, e->r->f -= f;
 	return f;
 }
