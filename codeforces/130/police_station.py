@@ -25,10 +25,10 @@ def bfs(v0):
             if d[w] == d[v] + 1:
                 ways[w] += ways[v]
         i += 1
-    return q, d, ways
+    return d, ways
 
-q0, d0, ways0 = bfs(0)
-q1, d1, ways1 = bfs(n - 1)
+d0, ways0 = bfs(0)
+d1, ways1 = bfs(n - 1)
 
 min_dist = d0[n - 1]
 num_paths = ways0[n - 1]
