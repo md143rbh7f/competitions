@@ -1,85 +1,106 @@
-#include <cstring>
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
+#include <cstring>
+#include <utility>
+#include <vector>
 
 using namespace std;
 
-#define REP(i,a,b) for(int i=(a);i<(b);i++)
-#define rep(i,n) REP(i,0,n)
-#define clear(i,n) memset(i,n,sizeof(i))
+typedef long long ll;
+typedef vector<int> vi;
+typedef vector<double> vd;
+#define range(i,a,b) for(auto i=(a);i<b;i++)
+#define rep(i,n) range(i,0,n)
+#define CLR(i,x) memset(i,x,sizeof(i))
+#define clr(i) CLR(i,0)
 
-int cases, n, kills[13][13], next[13][13], l[13];
-double dp[1<<13][13][13], p[13], best[13], a[13][14], EPS = 1e-13;
-// mask, turn, prob
+#define N 13
+
+double p[N], win[1<<N][N][N], EPS = 1e-13;
+// mask, person, shooter -> prob of surviving
+
+bool zero(double x) { return abs(x) <= EPS; }
+void normalise(vd & v, int j)
+{
+	double x = v[j];
+	range(k, j, v.size()) v[k] /= x;
+}
+void zero_out(vd & v, vd & u, int j)
+{
+	if(zero(u[j])) return;
+	double r = u[j] / v[j];
+	range(k, j, v.size()) u[k] -= r * v[k];
+}
+
+template <typename T>
+int rref(vector<T> & a, int m = 0)
+{
+	int n = a.size(), r = 0;
+	if(!m) m = a[0].size();
+	rep(j, m)
+	{
+		bool found = false;
+		range(i, r, n) if(!zero(a[i][j]))
+		{
+			found = true;
+			swap(a[r], a[i]);
+			break;
+		}
+		if(!found) continue;
+		normalise(a[r], j);
+		rep(i, n) if(!zero(a[i][j]) && i != r) zero_out(a[r], a[i], j);
+		r++;
+	}
+	return r;
+}
+
+struct Shot { int who, next; };
+
+void solve()
+{
+	int n;
+	scanf("%d", &n);
+	rep(i, n) scanf("%lf", &p[i]), p[i] /= 100, win[1<<i][i][i] = 1;
+	range(s, 1, 1<<n)
+	{
+		vi _;
+		rep(i, n) if(s & (1 << i)) _.push_back(i);
+		int m = _.size();
+		if(m == 1) continue;
+
+		vd best(m);
+		vector<Shot> shots[m];
+		rep(i, m) rep(j, m) if(i != j)
+		{
+			int k = (i + 1) % m;
+			if(k == j) k = (k + 1) % m;
+			double prob = win[s ^ (1 << _[j])][_[i]][_[k]];
+			if(prob > best[i] + EPS) shots[i].clear(), best[i] = prob;
+			if(zero(prob - best[i])) shots[i].push_back({j, k});
+		}
+
+		rep(i, m)
+		{
+			vector<vd> a(m, vd(m + 1));
+			rep(j, m)
+			{
+				a[j][j] = 1, a[j][(j + 1) % m] = p[_[j]] - 1;
+				for(auto & shot : shots[j])
+					a[j][m] += win[s ^ (1 << _[shot.who])][_[i]][_[shot.next]];
+				a[j][m] *= p[_[j]] / shots[j].size();
+			}
+			rref(a);
+			rep(j, m) win[s][_[i]][_[j]] = a[j][m];
+		}
+	}
+	rep(i, n) printf("%0.2f ", 100 * win[(1<<n)-1][i][0]);
+	printf("\n");
+}
 
 int main()
 {
-	scanf("%d",&cases);
-	while(cases--)
-	{
-		scanf("%d",&n);
-		clear(dp,0), clear(p,0);
-		rep(i,n) scanf("%lf",&p[i]), p[i]/=100, dp[1<<i][i][i] = 1;
-		REP(m,1,1<<n)
-		{
-			int c = 0;
-			rep(i,n) if(m&(1<<i)) c++;
-			if(c>=2)
-			{
-				clear(best,0), clear(kills,0), clear(next,0), clear(l,0);
-				rep(i,n) if(m&(1<<i))
-				rep(j,n) if(m&(1<<j))
-				if(i!=j)
-				{
-					int nxt = (i+1)%n;
-					while(1)
-					{
-						if(nxt!=j&&(m&(1<<nxt))) break;
-						nxt=(nxt+1)%n;
-					}
-					if(abs(p[i]*dp[m-(1<<j)][nxt][i]-best[i])<=EPS) kills[i][l[i]] = j, next[i][l[i]] = nxt, l[i]++;
-					else if(p[i]*dp[m-(1<<j)][nxt][i]-best[i]>EPS) best[i] = p[i]*dp[m-(1<<j)][nxt][i], kills[i][0] = j, next[i][0] = nxt, l[i] = 1;
-				}
-				rep(x,n) if(m&(1<<x))
-				{
-					clear(a,0);
-					int q = 0;
-					rep(i,n) if(m&(1<<i))
-					{
-						a[q][q] = 1, a[q][(q+1)%c] = p[i]-1;
-						rep(j,l[i]) a[q][c] += dp[m-(1<<kills[i][j])][next[i][j]][x];
-						a[q][c] *= p[i]/l[i];
-						q++;
-					}
-					rep(i,c)
-					{
-						REP(j,i,c)
-						if( abs(a[j][i])>=EPS )
-						{
-							REP(k,i,c+1)
-							{
-								double t = a[i][k];
-								a[i][k] = a[j][k];
-								a[j][k] = t;
-							}
-							break;
-						}
-						double r = a[i][i];
-						REP(k,i,c+1) a[i][k] /= r;
-						rep(j,c)
-						if( j!=i && abs(a[j][i])>=EPS )
-						{
-							r = a[j][i];
-							REP(k,i,c+1) a[j][k] -= r*a[i][k];
-						}
-					}
-					q = 0;
-					rep(i,n) if(m&(1<<i)) dp[m][i][x] = a[q][c], q++;
-				}
-			}
-		}
-		rep(i,n) printf("%0.2f ",100*dp[(1<<n)-1][0][i]);
-		printf("\n");
-	}
+	int t;
+	scanf("%d", &t);
+	while(t--) solve(), clr(win);
 	return 0;
 }

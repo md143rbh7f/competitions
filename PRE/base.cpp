@@ -27,6 +27,7 @@ using namespace std;
 
 typedef long long ll;
 typedef vector<int> vi;
+typedef vector<double> vd;
 typedef vector<ll> vll;
 typedef vector<string> vs;
 typedef pair<int,int> pii;

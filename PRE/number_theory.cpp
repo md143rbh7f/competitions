@@ -1,4 +1,4 @@
-// alternatively, use __gcd (requires #include <algorithm>)
+// alternatively, use __gcd from <algorithm>
 int gcd(int a, int b)
 {
 	while(b)
@@ -31,11 +31,10 @@ int mod_inv(int a, int m)
 	return lx;
 }
 
-ll mod_exp(ll a, ll b)
+ll mod_pow(ll a, int b)
 {
 	if(!b) return 1;
-	if(b % 2) return M(a * mod_exp(M(a * a), b / 2));
-	return mod_exp(M(a * a), b / 2);
+	return M(mod_pow(M(a * a), b / 2) * (b % 2 ? a : 1));
 }
 
 vll get_factors(ll n)
