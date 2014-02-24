@@ -1,58 +1,61 @@
+#include <algorithm>
 #include <cmath>
-#include <cstdio>
-#include <map>
+#include <iostream>
 
 using namespace std;
 
-#define rep(i,n) for(int i=0;i<(n);i++)
-#define foreach(i,c) for(__typeof__((c).end()) i=(c).begin();i!=(c).end();i++)
+#define rep(i,n) for(int i=0;i<n;i++)
 
-#define L 1005
+#define N 1005
+#define M 3*N
 #define INF 1234567890
 
-int n, d, id[L], x[L];
-map<int,int> sorted;
+int n, m, d, lo, hi, h[N], x[N], u[M], v[M], l[M];
+
+void edge(int a, int b, int c)
+{
+	u[m] = a, v[m] = b, l[m] = c, m++;
+}
 
 bool solve()
 {
-	scanf( "%d%d", &n, &d );
-	if( !n && !d ) return false;
+	cin >> n >> d;
+	if(!n) return false;
 
-	sorted.clear();
-	rep(i,n)
+	m = lo = hi = 0;
+	rep(i, n)
 	{
-		int h;
-		scanf( "%d", &h );
-		sorted[h] = i;
+		cin >> h[i], x[i] = INF;
+		if(h[i] < h[lo]) lo = i;
+		if(h[i] > h[hi]) hi = i;
+		if(i) edge(i - 1, i, -1);
 	}
 
-	int ord = 0;
-	foreach( it, sorted ) x[ord++] = it->second;
-
-	rep(i,n-1) if( abs( x[i+1] - x[i] ) > d )
+	rep(i, n)
 	{
-		printf( "-1\n" );
-		return true;
+		int j = -1;
+		rep(k, n) if(h[k] > h[i] && (j == -1 || h[k] < h[j])) j = k;
+		if(j != -1) edge(i, j, d), edge(j, i, d);
 	}
 
-	rep(i,n) id[x[i]] = i;
+	x[min(lo, hi)] = 0;
 
-	rep(i,n) if( x[i] > x[0] || x[i] > x[n-1] ) x[i] = INF;
-	
-	rep(t,n) rep(i,n-1)
+	bool change;
+	rep(t, n)
 	{
-		x[i] = min( x[i], x[i+1] + d );
-		x[i+1] = min( x[i+1], x[i] + d );
-		x[id[i]] = min( x[id[i]], x[id[i+1]] - 1 );
+		change = false;
+		rep(i, m) if(x[u[i]] > x[v[i]] + l[i])
+			x[u[i]] = x[v[i]] + l[i], change = true;
 	}
 
-	printf( "%d\n", (int) abs( x[n-1] - x[0] ) );
+	if(change) cout << -1 << endl;
+	else cout << abs(x[lo] - x[hi]) << endl;
 
 	return true;
 }
 
 int main()
 {
-	while( solve() );
+	while(solve());
 	return 0;
 }
