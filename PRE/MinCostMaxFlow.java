@@ -1,5 +1,5 @@
 /*
-	Java implementations of min-cost max flow using Bellman-Ford.
+	Java implementation of min-cost max flow using Bellman-Ford.
 */
 
 	ArrayList<Edge>[] g;

@@ -11,7 +11,7 @@ struct Edge
 vector<Edge*> g[N];
 int n;
 
-void add_Edge(int i, int j, int c = 1)
+void add_edge(int i, int j, int c = 1)
 {
 	Edge* e = new Edge{j, c, 0, 0}, *f = new Edge{i, 0, 0, 0};
 	e->r = f, f->r = e;
