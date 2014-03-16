@@ -5,34 +5,34 @@
 
 // BEGIN KOSARAJU'S (C++)
 
-vector<int> g[MAX], h[MAX]; // graph, reverse graph
-int n, c[MAX], nc, q[MAX], nq; // num nodes, component map, num components, queue, queue index
-bool seen[MAX];
+vi g[N], h[N]; // graph, reverse graph
+int n, c[N], nc, q[N], nq; // num nodes, component map, num components, queue, queue index
+bool seen[N];
 
-void dfs1( int x )
+void dfs0(int x)
 {
 	if(seen[x]) return;
 	seen[x] = true;
-	rep(y,g[x].size()) dfs1(g[x][y]);
+	for(auto y : g[x]) dfs0(y);
 	q[nq++] = x;
 }
 
-void dfs2( int x )
+void dfs1(int x)
 {
-	if(c[x]>-1) return;
+	if(c[x] > -1) return;
 	c[x] = nc;
-	rep(y,h[x].size()) dfs2(h[x][y]);
+	for(auto y : h[x]) dfs1(y);
 }
 
 	nq = 0;
-	rep(i,n) seen[i] = false;
-	rep(i,n) dfs1(i);
+	clr(seen);
+	rep(i, n) dfs0(i);
 
 	nc = 0;
-	rep(i,n) c[i] = -1;
-	for( int i = n-1; i >= 0; i-- ) if(c[q[i]]==-1)
+	CLR(c, -1);
+	for(int i = n - 1; i >= 0; i--) if(c[q[i]] == -1)
 	{
-		dfs2(q[i]);
+		dfs1(q[i]);
 		nc++;
 	}
 
