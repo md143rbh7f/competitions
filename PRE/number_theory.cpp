@@ -31,7 +31,7 @@ int mod_inv(int a, int m)
 	return lx;
 }
 
-ll mod_pow(ll a, int b)
+ll mod_pow(ll a, ll b)
 {
 	if(!b) return 1;
 	return M(mod_pow(M(a * a), b / 2) * (b % 2 ? a : 1));

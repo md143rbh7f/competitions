@@ -1,3 +1,42 @@
+/*
+ * This library implements some matrix algorithms which are templatized for
+ * different types of containers (vector<vector<double>> for real-valued
+ * matrices, vector<vector<int>> for integer matrices modulo N, etc...).
+ */
+
+/*
+ * Matrix exponentiation
+ */
+
+// Matrix exponentiation on Z_N
+vector<vll> id(int n)
+{
+	vector<vll> a(n, vll(n));
+	rep(i, n) a[i][i] = 1;
+	return a;
+}
+
+vector<vll> operator*(vector<vll> a, vector<vll> b)
+{
+	int n = a.size(), p = b.size(), m = b[0].size();
+	vector<vll> c(n, vll(m));
+	rep(i, n) rep(j, m) rep(k, p)
+		c[i][j] = M(c[i][j] + M(a[i][k] * b[k][j]));
+	return c;
+}
+
+vector<vll> operator^(vector<vll> a, ll b)
+{
+	if(!b) return id(a.size());
+	vector<vll> next = (a * a)^(b / 2);
+	return b % 2 ? next * a : next;
+}
+
+
+/*
+ * Gaussian elimination
+ */
+
 // Gaussian elimination on R
 bool zero(double x) { return abs(x) <= EPS; }
 void normalise(vd & v, int j)
