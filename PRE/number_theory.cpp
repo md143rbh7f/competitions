@@ -23,6 +23,7 @@ void extended_euclidean(int a, int b, int & lx, int & ly)
 	}
 }
 
+// modulo inverse using the extended Euclidean algorithm
 int mod_inv(int a, int m)
 {
 	int lx, ly;
@@ -35,6 +36,12 @@ ll mod_pow(ll a, ll b)
 {
 	if(!b) return 1;
 	return M(mod_pow(M(a * a), b / 2) * (b % 2 ? a : 1));
+}
+
+// modulo inverse using exponentiation
+ll mod_inv(int a)
+{
+	return mod_pow(a, MOD - 2);
 }
 
 vll get_factors(ll n)
