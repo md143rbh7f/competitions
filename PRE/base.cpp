@@ -35,7 +35,8 @@ typedef pair<int,int> pii;
 #define rep(i,n) range(i,0,n)
 #define all(c) begin(c),end(c)
 #define CLR(i,x) memset(i,x,sizeof(i))
-#define clr(i) CLR(i,0)
+#define clr0(i) CLR(i,0)
+#define clr1(i) CLR(i,-1)
 #define M(x) ((x)%MOD)
 #define acc(f,x,y) x=f(x,y)
 
