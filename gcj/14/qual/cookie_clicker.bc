@@ -1,0 +1,19 @@
+scale = 20
+cases = read()
+for(num = 1; num <= cases; num++) {
+	c = read()
+	f = read()
+	x = read()
+	ans = 123456789
+	s = 2
+	t = 0
+	for(i = 0; ; i++) {
+		test = t + x / s;
+		if(test < ans) {
+			ans = test
+			t += c / s
+			s += f
+		} else break
+	}
+	print "Case #", num, ": ", ans, "\n"
+}
