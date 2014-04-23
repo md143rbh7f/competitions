@@ -26,7 +26,7 @@ void min_cost_max_flow(int s, int t, int & mc, int & mf)
 	{
 		rep(i, n) dist[i] = INF;
 		dist[s] = 0;
-		clr(pre);
+		clr0(pre);
 		rep(q, n)
 		{
 			bool change = false;

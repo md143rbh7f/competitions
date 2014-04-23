@@ -64,8 +64,8 @@ int dfs(int s, int t, int mf)
 
 int max_flow(int s, int t)
 {
-	while(bfs(s, t)) clr(pre);
-	// while(dfs(s, t, INF)) clr(seen);
+	while(bfs(s, t)) clr0(pre);
+	// while(dfs(s, t, INF)) clr0(seen);
 	int ans = 0;
 	for(auto e : g[s]) ans += e->f;
 	return ans;

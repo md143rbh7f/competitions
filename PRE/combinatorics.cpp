@@ -10,22 +10,22 @@ int dist_part[N][K];
 
 	// Factorial
 	fac[0] = 1;
-	range(n, 1, N) fac[n] = M(n * fac[n-1]);
+	range(i, 1, N) fac[i] = M(i * fac[i-1]);
 
-	// n choose k
-	rep(n, N) choose[n][0] = 1;
-	range(n, 1, N) range(k, 1, n + 1)
-		choose[n][k] = M(choose[n-1][k] + choose[n-1][k-1]);
+	// i choose j
+	rep(i, N) choose[i][0] = 1;
+	range(i, 1, N) range(j, 1, i + 1)
+		choose[i][j] = M(choose[i-1][j] + choose[i-1][j-1]);
 	
-	// Partitions of n consisting of k integers
-	range(n, 1, N) part[n][1] = 1;
-	range(n, 1, N) range(k, 2, n + 1)
-		part[n][k] = M(part[n-k][k] + part[n-1][k-1]);
+	// Partitions of i consisting of j integers
+	range(i, 1, N) part[i][1] = 1;
+	range(i, 1, N) range(j, 2, i + 1)
+		part[i][j] = M(part[i-j][j] + part[i-1][j-1]);
 
-	// Partitions of n consisting of k distinct integers
-	// (We can compute dist_part[n][k] = part[n - choose[k][2]][k], but since
+	// Partitions of i consisting of j distinct integers
+	// (We can compute dist_part[i][j] = part[i - choose[j][2]][j], but since
 	// the largest K is asymptotically small compared to N, directly computing
 	// dist_part saves time and memory.)
-	range(n, 1, N) dist_part[n][1] = 1;
-	range(n, 1, N) range(k, 2, K)
-		dist_part[n][k] = M(dist_part[n-k][k] + dist_part[n-k][k-1]);
+	range(i, 1, N) dist_part[i][1] = 1;
+	range(i, 1, N) range(j, 2, K)
+		dist_part[i][j] = M(dist_part[i-j][j] + dist_part[i-j][j-1]);
