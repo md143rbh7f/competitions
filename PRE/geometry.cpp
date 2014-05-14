@@ -24,6 +24,13 @@ template <typename T> inline Point<T> operator-(Point<T> a) { return -1 * a; }
 template <typename T> ostream & operator<<(ostream & os, Point<T> p) { return os << "(" << p.x << ", " << p.y << ")"; }
 
 template <typename T>
+struct by_y
+{
+inline bool operator()(const Point<T> & p, const Point<T> & q) const
+{ return p.y < q.y || (p.y == q.y && p.x < q.x); }
+};
+
+template <typename T>
 vector<Point<T>> convex_hull(vector<Point<T>> & pt)
 {
 	auto p0 = *min_element(all(pt));
@@ -42,10 +49,30 @@ vector<Point<T>> convex_hull(vector<Point<T>> & pt)
 }
 
 template <typename T>
-T polygon_area(vector<Point<T>> && pt)
+T polygon_area(vector<Point<T>> & pt)
 {
 	int n = pt.size();
 	T ans = 0;
 	rep(i,n) ans += pt[i] % pt[(i + 1)%n];
 	return ans / 2;
+}
+
+template <typename T>
+T closest(vector<Point<T>> & pt)
+{
+	if(pt.size() < 2) return 0;
+	sort(all(pt));
+	set<Point<T>, by_y<T>> u;
+	T ans = INF;
+	int lo = 0;
+	for(auto & p : pt)
+	{
+		while(pt[lo].x < p.x - ans)
+			u.erase(pt[lo++]);
+		auto q = u.lower_bound({p.x - ans, p.y - ans});
+		while(q != u.end() && q->y <= p.y + ans)
+			ans = min(ans, (p - *(q++)).r());
+		u.insert(p);
+	}
+	return ans;
 }
