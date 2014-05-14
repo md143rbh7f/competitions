@@ -53,3 +53,16 @@ vll get_factors(ll n)
 	sort(all(ans));
 	return ans;
 }
+
+vector<pair<ll, int>> factorise(ll n)
+{
+	vector<pair<ll, int>> ans;
+	for(ll f = 2; f * f <= n; f++) if(!(n % f))
+	{
+		int p = 0;
+		while(!(n % f)) n /= f, p++;
+		ans.push_back({f, p});
+	}
+	if(n > 1) ans.push_back({n, 1});
+	return ans;
+}
