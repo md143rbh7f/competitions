@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <bitset>
+#include <cassert>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -40,6 +41,7 @@ typedef pair<int,int> pii;
 #define CLR(i,x) memset(i,x,sizeof(i))
 #define clr0(i) CLR(i,0)
 #define clr1(i) CLR(i,-1)
+#define bit(x,i) ((x>>i)&1)
 #define M(x) ((x)%MOD)
 #define acc(f,x,y) x=f(x,y)
 
@@ -51,6 +53,8 @@ int cases;
 struct $NAME
 {
 	@
+	{
+	}
 };
 ## endif
 ## if t!
