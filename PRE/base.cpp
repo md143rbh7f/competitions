@@ -52,9 +52,9 @@ int cases;
 ## if t
 struct $NAME
 {
-	@
-	{
-	}
+@
+{
+}
 };
 ## endif
 ## if t!
