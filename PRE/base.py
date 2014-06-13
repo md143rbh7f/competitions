@@ -9,6 +9,7 @@ import sys
 
 read_line = lambda: [int(i) for i in input().split()]
 ## endif
+INF = float('inf')
 
 ## if t
 class $NAME(object):

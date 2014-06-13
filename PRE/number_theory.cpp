@@ -66,3 +66,16 @@ vector<pair<ll, int>> factorise(ll n)
 	if(n > 1) ans.push_back({n, 1});
 	return ans;
 }
+
+// A modified sieve of Eratosthenes which generates, the smallest prime factor
+// of each integer in [0, ..., n - 1]. This lookup allows us to factorise x
+// in O(f), where f is the number of factors of x.
+vi smallest_factor(int n)
+{
+	vi ans(n);
+	rep(i, n) ans[i] = i;
+	for(int p = 2; p * p < n; p++) if(ans[p] == p)
+	for(int q = p * p; q < n; q += p)
+		ans[q] = p;
+	return ans;
+}
