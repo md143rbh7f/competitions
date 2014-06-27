@@ -11,7 +11,7 @@
 #include <fstream>
 #include <functional>
 #include <iomanip>
-#include <iostream>
+//#include <iostream>
 #include <iterator>
 #include <list>
 #include <map>
@@ -60,7 +60,7 @@ struct $NAME
 ## if t!
 int main()
 {
-	ios_base::sync_with_stdio(false);
+	//ios_base::sync_with_stdio(false);
 ##  if c
 	scanf("%d", &cases);
 	for(int case_num = 1; i <= cases; case_num++)
