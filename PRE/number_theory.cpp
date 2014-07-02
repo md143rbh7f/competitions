@@ -44,12 +44,15 @@ ll mod_inv(int a)
 	return mod_pow(a, MOD - 2);
 }
 
-vll get_factors(ll n)
+// The number of divisors grows rather slowly. For example, for all n <= 10^9,
+// d(n) <= 1344, where d(n) is the number of divisors of n. See
+// "count_number_factors.cpp" for more information.
+vll get_divisors(ll n)
 {
 	vll ans;
-	ll f = 1;
-	for(; f * f < n; f++) if(!(n % f)) ans.push_back(f), ans.push_back(n / f);
-	if(f * f == n) ans.push_back(f);
+	ll x = 1;
+	for(; x * x < n; x++) if(!(n % x)) ans.push_back(x), ans.push_back(n / x);
+	if(x * x == n) ans.push_back(x);
 	sort(all(ans));
 	return ans;
 }
@@ -67,15 +70,39 @@ vector<pair<ll, int>> factorise(ll n)
 	return ans;
 }
 
-// A modified sieve of Eratosthenes which generates, the smallest prime factor
+// A modified sieve of Eratosthenes which generates the smallest prime factor
 // of each integer in [0, ..., n - 1]. This lookup allows us to factorise x
 // in O(f), where f is the number of factors of x.
 vi smallest_factor(int n)
 {
 	vi ans(n);
-	rep(i, n) ans[i] = i;
-	for(int p = 2; p * p < n; p++) if(ans[p] == p)
-	for(int q = p * p; q < n; q += p)
-		ans[q] = p;
+	for(int p = 2; p * p < n; p++) if(!ans[p])
+	{
+		ans[p] = p;
+		for(int q = p * p; q < n; q += p)
+			ans[q] = p;
+	}
 	return ans;
+}
+
+// This not a function, but rather a technique for computing
+// f(x) = g(x) - (sum of f(y) for all y such that y divides x)
+// This can be useful in many number theory problems (e.g. SRMs 603 and 626).
+int g(int x) { /* dummy function */ return x; }
+void divisor_summation(int n)
+{
+	vll ds = get_divisors(n);
+	int m = ds.size();
+	vll f(m);
+	rep(i, m)
+	{
+		ll x = ds[i];
+		f[i] = M(g(x) - f[i] + MOD);
+		range(j, i + 1, m)
+		{
+			ll y = ds[j];
+			if(y % x) continue;
+			cnt[j] = M(cnt[j] + cnt[i]);
+		}
+	}
 }

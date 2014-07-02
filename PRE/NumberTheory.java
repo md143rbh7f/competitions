@@ -1,7 +1,7 @@
 // Finds gcd for two numbers, as well as other fancy things.
 
 // Euclidean algorithm
-// for BigIntegers, use BigInteger.gcd(...)
+// alternative: BigInteger.gcd(...)
 static int gcd(int a, int b)
 {
 	while(b != 0)
@@ -29,6 +29,7 @@ static int[] extended_euclidean(int a, int b)
 }
 
 // uses extended Euclidean algorithm to calculate inverse of a modulo m
+// alternative: use BigInteger.modInverse(...)
 static int modulo_inverse(int a, int m)
 {
 	int inv = extended_euclidean(a,m)[0];
