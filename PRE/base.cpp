@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <bitset>
 #include <cassert>
 #include <cctype>
@@ -44,6 +45,8 @@ typedef pair<int,int> pii;
 #define bit(x,i) ((x>>i)&1)
 #define M(x) ((x)%MOD)
 #define acc(f,x,y) x=f(x,y)
+#define fst first
+#define snd second
 
 ## if c
 int cases;

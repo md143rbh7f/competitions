@@ -100,3 +100,21 @@ int rref(vector<T> & a, int m = 0)
 	}
 	return r;
 }
+
+/*
+ * Invert a square matrix via Gaussian elimination.
+ */
+template <typename T>
+void inv(vector<T> & a)
+{
+	int n = a.size();
+	vector<T> b(a);
+	rep(i, n)
+	{
+		b[i].resize(2 * n);
+		b[i][n + i] = 1;
+	}
+	rref(b, n);
+	rep(i, n) rep(j, n)
+		a[i][j] = b[i][n + j];
+}
