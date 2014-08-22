@@ -13,6 +13,5 @@ INF = float('inf')
 
 ## if t
 class $NAME(object):
-	def @:
-		
+    def @(self, ):
 ## endif

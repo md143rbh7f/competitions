@@ -1,12 +1,7 @@
 // alternatively, use __gcd from <algorithm>
 int gcd(int a, int b)
 {
-	while(b)
-	{
-		int t = a % b;
-		a = b;
-		b = t;
-	}
+	while(b) tie(a, b) = tup(b, a % b);
 	return a;
 }
 
@@ -16,10 +11,10 @@ void extended_euclidean(int a, int b, int & lx, int & ly)
 	lx = 1, ly = 0;
 	while(b)
 	{
-		int t = a % b, q = a / b;
-		a = b; b = t;
-		t = x; x = lx - q * x; lx = t;
-		t = y; y = ly - q * y; ly = t;
+		int q = a / b;
+		tie(a, b) = tup(b, a % b);
+		tie(x, lx) = tup(lx - q * x, x);
+		tie(y, ly) = tup(ly - q * y, y);
 	}
 }
 

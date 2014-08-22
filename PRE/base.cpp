@@ -14,6 +14,7 @@
 #include <iomanip>
 //#include <iostream>
 #include <iterator>
+#include <limits>
 #include <list>
 #include <map>
 #include <numeric>
@@ -31,6 +32,7 @@
 using namespace std;
 
 typedef long long ll;
+typedef long double ld;
 typedef vector<int> vi;
 typedef vector<double> vd;
 typedef vector<ll> vll;
@@ -47,6 +49,7 @@ typedef pair<int,int> pii;
 #define acc(f,x,y) x=f(x,y)
 #define fst first
 #define snd second
+#define tup make_tuple
 
 ## if c
 int cases;

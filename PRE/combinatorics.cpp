@@ -7,7 +7,6 @@ int choose[N][N];
 int part[N][N];
 int dist_part[N][K];
 
-
 	// Factorial
 	fac[0] = 1;
 	range(i, 1, N) fac[i] = M(i * fac[i-1]);
@@ -29,3 +28,17 @@ int dist_part[N][K];
 	range(i, 1, N) dist_part[i][1] = 1;
 	range(i, 1, N) range(j, 2, K)
 		dist_part[i][j] = M(dist_part[i-j][j] + dist_part[i-j][j-1]);
+
+
+// Logarithmic versions of factorial and choose
+
+ld log_fac[M];
+
+inline ld log_choose(int i, int j)
+{
+	return i >= j ? log_fac[i] - log_fac[j] - log_fac[i - j] : 0;
+}
+
+	range(i, 1, m + 1)
+		log_fac[i] = log_fac[i - 1] + log(i);
+
