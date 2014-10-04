@@ -16,7 +16,7 @@ inline bool operator()(const Point & p, const Point & q) const
 	T c = ap % aq;
 	return c ? c > 0 : ap * ap < aq * aq;
 }
-inline T r() const { return hypot(x, y); }
+inline double r() const { return hypot(x, y); }
 inline T q() const { return atan2(y, x); }
 };
 template <typename T> inline Point<T> operator*(T c, Point<T> a) { return {c * a.x, c * a.y}; }
@@ -76,3 +76,14 @@ T closest(vector<Point<T>> & pt)
 	}
 	return ans;
 }
+
+template <typename T>
+inline int sgn(T x) { return x < 0 ? -1 : x > 0 ? 1 : 0; }
+
+template <typename T>
+struct Line
+{
+	Point<T> a, b;
+	inline bool _intersects(const Line<T> & o) const { return sgn((o.a - a) % (b - a)) * sgn((o.b - a) % (b - a)) <= 0; }
+	inline bool intersects(const Line<T> & o) const { return _intersects(o) && o._intersects(*this); }
+};
