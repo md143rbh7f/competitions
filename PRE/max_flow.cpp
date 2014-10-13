@@ -23,14 +23,14 @@ Edge* pre[N];
 
 int bfs(int s, int t)
 {
-	list<int> q;
-	q.push_back(s);
+	queue<int> q;
+	q.push(s);
 	while(!q.empty())
 	{
-		int i = *q.begin();
-		q.pop_front();
+		int i = q.front();
+		q.pop();
 		for(auto e : g[i]) if(e->c > e->f && e->j != s && !pre[e->j])
-			pre[e->j] = e, q.push_back(e->j);
+			pre[e->j] = e, q.push(e->j);
 	}
 	if(!pre[t]) return 0;
 	int f = INF;

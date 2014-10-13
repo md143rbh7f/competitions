@@ -72,7 +72,7 @@ int directed_minimum_spanning_tree(int root)
 			id[v] = k++;
 		vector<edge> fs;
 		for(auto & e : es) if(id[e.u] != id[e.v])
-			fs.push_back({id[e.u], id[e.v], e.c - pre[e.v]->c});
+			fs.emplace_back(id[e.u], id[e.v], e.c - pre[e.v]->c);
 		root = id[root], m = k, es = move(fs);
 	}
 	return ans;

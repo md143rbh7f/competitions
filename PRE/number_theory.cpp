@@ -59,9 +59,9 @@ vector<pair<ll, int>> factorise(ll n)
 	{
 		int p = 0;
 		while(!(n % f)) n /= f, p++;
-		ans.push_back({f, p});
+		ans.emplace_back(f, p);
 	}
-	if(n > 1) ans.push_back({n, 1});
+	if(n > 1) ans.emplace_back(n, 1);
 	return ans;
 }
 
