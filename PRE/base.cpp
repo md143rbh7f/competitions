@@ -12,7 +12,12 @@
 #include <fstream>
 #include <functional>
 #include <iomanip>
+## if t
+#include <iostream>
+## endif
+## if t!
 //#include <iostream>
+## endif
 #include <iterator>
 #include <limits>
 #include <list>
