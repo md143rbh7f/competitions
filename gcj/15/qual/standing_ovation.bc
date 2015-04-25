@@ -1,0 +1,29 @@
+scale = 0
+
+define reverse(n, len) {
+	ans = 0
+	for(i = 0; i < len; i++) {
+		ans = 10 * ans + n % 10
+		n /= 10
+	}
+	return ans
+}
+
+num_cases = read()
+
+for(case_num = 1; case_num <= num_cases; case_num++) {
+	len = read() + 1
+	s = reverse(read(), len)
+	tot = 0
+	ans = 0
+	for(i = 0; i < len; i++) {
+		c = s % 10
+		s /= 10
+		delta = i - tot
+		if(delta > ans) {
+			ans = delta
+		}
+		tot += c
+	}
+	print "Case #", case_num, ": ", ans, "\n"
+}
