@@ -37,7 +37,7 @@ vector<Point<T>> convex_hull(vector<Point<T>> & pt)
 	sort(all(pt), p0);
 	int n = pt.size();
 	vector<Point<T>> ans;
-	rep(i,n + 1)
+	rep(i, n + 1)
 	{
 		auto & p = pt[i%n];
 		while(ans.size() >= 2
