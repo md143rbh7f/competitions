@@ -10,13 +10,14 @@ int a, b;
 T sum;
 S lazy;
 
-void add(S);
-T plus(T, T), value();
+virtual void add(S);
+virtual T plus(T, T), value();
+virtual S zero();
 
 void push()
 {
 	l->add(lazy), r->add(lazy);
-	lazy = S();
+	lazy = zero();
 }
 
 void update(int i, int j, S x)
@@ -46,7 +47,7 @@ SegmentNode * init(int i, int j)
 {
 	a = i, b = j, l = r = nullptr;
 	sum = T();
-	lazy = S();
+	lazy = zero();
 	if(b - a == 1) return this + 1;
 	int c = (a + b) / 2;
 	return (r = (l = this + 1)->init(a, c))->init(c, b);
@@ -65,6 +66,7 @@ struct SumNode : public SegmentNode<ll, ll>
 inline ll plus(ll x, ll y) { return x + y; }
 inline void add(ll x) { lazy += x; }
 inline ll value() { return sum + lazy * (b - a); }
+inline ll zero() { return 0; }
 };
 
 SumNode buf[2*N], * tree = buf;

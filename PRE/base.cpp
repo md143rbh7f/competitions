@@ -61,27 +61,22 @@ int cases;
 
 ## endif
 ## if t
-struct $NAME
-{
-@
-{
+struct $NAME {
+@ {
 }
 };
 ## endif
 ## if t!
-int main()
-{
+int main() {
 	//ios_base::sync_with_stdio(false);
 ##  if c
 	scanf("%d", &cases);
-	for(int case_num = 1; i <= cases; case_num++)
-	{
+	for(int case_num = 1; i <= cases; case_num++) {
 		
 	}
 ##  endif
 ##  if b
-	while(1)
-	{
+	while(1) {
 	}
 ##  endif
 	return 0;
