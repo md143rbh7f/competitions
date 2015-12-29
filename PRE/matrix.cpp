@@ -9,15 +9,13 @@
  */
 
 // Matrix exponentiation on Z_N
-vector<vll> id(int n)
-{
+vector<vll> id(int n) {
 	vector<vll> a(n, vll(n));
 	rep(i, n) a[i][i] = 1;
 	return a;
 }
 
-vector<vll> operator*(vector<vll> a, vector<vll> b)
-{
+vector<vll> operator*(vector<vll> a, vector<vll> b) {
 	int n = a.size(), p = b.size(), m = b[0].size();
 	vector<vll> c(n, vll(m));
 	rep(i, n) rep(j, m) rep(k, p)
@@ -25,8 +23,7 @@ vector<vll> operator*(vector<vll> a, vector<vll> b)
 	return c;
 }
 
-vector<vll> operator^(vector<vll> a, ll b)
-{
+vector<vll> operator^(vector<vll> a, ll b) {
 	if(!b) return id(a.size());
 	vector<vll> next = (a * a)^(b / 2);
 	return b % 2 ? next * a : next;
