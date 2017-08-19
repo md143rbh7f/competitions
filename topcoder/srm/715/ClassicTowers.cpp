@@ -49,7 +49,7 @@ string findTowers(long long t, vi goal) {
 			int pos = p[i][j][k][want];
 			ans[m] += pos;
 			x[pos]--;
-			want ^= (1 & (t >> m)) * (3 ^ pos);
+			want ^= (want != pos) * (3 ^ pos);
 		}
 		return ans;
 	}
