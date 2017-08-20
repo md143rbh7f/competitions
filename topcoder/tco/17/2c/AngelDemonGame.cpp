@@ -1,6 +1,17 @@
-/*
-	C++ implementation of min-cost max flow using Bellman-Ford.
-*/
+#include <cstring>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+typedef vector<string> vs;
+#define range(i,a,b) for(auto i=(a);i<(b);i++)
+#define rep(i,n) range(i,0,n)
+#define CLR(i,x) memset(i,x,sizeof(i))
+#define clr0(i) CLR(i,0)
+
+constexpr int N = 60, INF = 123456789;
+int n;
 
 struct Edge {
 	int j, ca, co, f;
@@ -57,3 +68,20 @@ void min_cost_max_flow(int s, int t, int & mc, int & mf, int budget=-1, int lim=
 		}
 	}
 }
+
+struct AngelDemonGame {
+string winner (vs g, int add, int del) {
+	if (del >= g.size() - 1) {
+		return "Demon";
+	}
+	n = g.size();
+	rep (i, n) rep (j, n) if (i != j) {
+		add_edge(i, j, 1, g[i][j] == 'N');
+	}
+
+	int mc, mf;
+	min_cost_max_flow(0, n - 1, mc, mf, add);
+
+	return mf > del ? "Angel" : "Unknown";
+}
+};
