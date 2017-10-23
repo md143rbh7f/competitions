@@ -1,4 +1,24 @@
-This library is a work in progress and I don't recommend that people use in it without having a general idea of what it does.
+This library is a work in progress and I don't recommend that people use the
+code without having a reasonable idea of the underlying algorithms. There are
+certain caveats and exceptional cases that arise due to the nature of
+programming competitions. For example:
 
-To refactor:
-- Tarjan / Kosaraju (C++, Java)
+  * Most data structures allocate memory statically.
+
+  * Many data structures don't automatically clean up after themselves. This
+    follows a more general C++ principle of not computing things unless
+    absolutely necessary.
+
+  * Much of the code is structured such that it can be easily modified and
+    adapted to suit each use case, as opposed to being composed with or
+	inherited by an existing piece of code.
+
+
+To-do list, in no particular order:
+
+  * Use namespaces, templates, private methods to better abstract prewritten
+    code away from other code.
+
+  * Refactor Tarjan / Kosaraju algorithms (C++, Java).
+
+  * Develop better stylistic consistency.

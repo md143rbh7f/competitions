@@ -36,13 +36,13 @@
 
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
-typedef vector<int> vi;
-typedef vector<double> vd;
-typedef vector<ll> vll;
-typedef vector<string> vs;
-typedef pair<int,int> pii;
+using ll = long long;
+using ld = long double;
+using pii = pair<int,int>;
+using vi = vector<int>;
+using vd = vector<double>;
+using vll = vector<ll>;
+using vs = vector<string>;
 #define range(i,a,b) for(auto i=(a);i<(b);i++)
 #define rep(i,n) range(i,0,n)
 #define all(c) begin(c),end(c)
