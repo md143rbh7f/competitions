@@ -1,4 +1,4 @@
-template <size_t SZ>
+template <int SZ>
 struct SuffixArrayWorker
 {
 // Implementation of Kärkkäinen / Sanders algorithm for computing the suffix array in linear time.

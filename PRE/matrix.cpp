@@ -66,9 +66,9 @@ void zero_out(vi & v, vi & u, int j)
 
 // Gaussian elimination on Z_2
 inline bool zero(bool x) { return !x; }
-template <size_t SZ>
+template <int SZ>
 void normalise(bitset<SZ> & v, int j) {}
-template <size_t SZ>
+template <int SZ>
 void zero_out(bitset<SZ> & v, bitset<SZ> & u, int j) { if(u[j]) u ^= v; }
 
 /*

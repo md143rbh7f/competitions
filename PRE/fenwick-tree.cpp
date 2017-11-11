@@ -16,7 +16,7 @@
  *   * Fenwick tree indices are 1-based.
  */
 
-template <size_t SZ>
+template <int SZ>
 struct FenwickTree {
 int y[SZ];
 

@@ -18,7 +18,7 @@
  * The code here is heavily based on Bruce Merry's implementation.
  */
 
-template <size_t SZ>
+template <int SZ>
 struct UnionFind {
 int par[SZ];
 

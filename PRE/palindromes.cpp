@@ -17,31 +17,28 @@
  *
  * Quick usage notes and gotchas:
  *
- *   * The length of the longest palindrome centered at s[i] is len[2 * i + 1].
+ *   * The length of the longest palindrome centered at s[i] is len[2 * i].
  *
  *   * Likewise, the length of the longest palindrome centered between s[i] and
- *     s[i + 1] is len[2 * (i + 1)].
- * 
+ *     s[i + 1] is len[2 * i + 1].
+ *
  */
 
-template <typename T, size_t SZ>
+
+template <int SZ>
 struct Manacher {
-T s2[2 * SZ];
-int len[2 * SZ];
+int sz, len[2 * SZ];
 
-void work(T * s, int n, T empty=-1) {
-	int n2 = 2 * n + 1;
-	rep (i, n) s2[2 * i] = empty, s2[2 * i + 1] = s[i];
-	s2[n2 - 1] = empty;
-
+template <typename It>
+void process(It s, It t) {
+	sz = 2 * (t - s) - 1;
 	int r = 0;
-	rep (i, n2) {
+	rep (i, sz) {
 		if (i == r + len[r]) len[i] = 0;
 		else len[i] = min(len[2 * r - i], r + len[r] - i);
-
 		int x = i - len[i] - 1, y = i + len[i] + 1;
-		while (x >= 0 && y < n2 && s2[x] == s2[y]) len[i]++, x--, y++;
-
+		while (x >= -1 && y <= sz && (x & 1 || s[x / 2] == s[y / 2]))
+			len[i]++, x--, y++;
 		if (i + len[i] > r + len[r]) r = i;
 	}
 }
@@ -93,11 +90,11 @@ void work(T * s, int n, T empty=-1) {
  * The palindrome tree was invented by Mikhail Rubinchik.
  *
  * Quick usage notes and gotchas:
- * 
+ *
  *   * The characters in the input string must be in the range 0, 1, ..., C - 1.
  */
 
-template <size_t SZ, typename T=char, size_t C=26>
+template <int SZ, int C=26>
 struct PalindromeTree  {
 struct Node {
 	Node * next[C], * suf;
@@ -107,22 +104,26 @@ struct Node {
 Node nodes[SZ];
 int sz;
 
-void process(T * s, int n) {
+template <typename It>
+void process(It s, It t) {
 	sz = 2;
 	nodes[0].len = -1, nodes[0].suf = nodes;
 	nodes[1].len = 0, nodes[1].suf = nodes;
 	Node * last = nodes + 1;
+	int n = t - s;
 	rep (i, n) last = add_node(s, i, last);
 }
 
 private:
-Node * match(T * s, int i, Node * last) {
+template <typename It>
+Node * match(It s, int i, Node * last) {
 	while (i - 1 - last->len < 0 || s[i - 1 - last->len] != s[i])
 		last = last->suf;
 	return last;
 }
 
-Node * add_node(T * s, int i, Node * last) {
+template <typename It>
+Node * add_node(It s, int i, Node * last) {
 	last = match(s, i, last);
 	if (last->next[s[i]]) return last->next[s[i]];
 

@@ -22,3 +22,6 @@ To-do list, in no particular order:
   * Refactor Tarjan / Kosaraju algorithms (C++, Java).
 
   * Develop better stylistic consistency.
+
+  * Use pairs of (start, end) iterators as function parameters instead of
+    vectors, where possible.
