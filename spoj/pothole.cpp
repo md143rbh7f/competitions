@@ -1,7 +1,15 @@
-/*
- * Implementation of Dinitz's algorithm for computing the max flow through a
- * graph.
- */
+#include <algorithm>
+#include <cstdio>
+#include <cstring>
+#include <limits>
+#include <vector>
+
+using namespace std;
+
+#define range(i,a,b) for(auto i=(a);i<(b);i++)
+#define rep(i,n) range(i,0,n)
+#define CLR(i,x) memset(i,x,sizeof(i))
+#define clr1(i) CLR(i,-1)
 
 template <int V, int E, typename T>
 struct MaxFlowGraph {
@@ -57,3 +65,30 @@ T dfs(int i, int t, T f) {
 	return ans;
 }
 };
+
+constexpr int N = 205;
+
+MaxFlowGraph<N, N * (N - 1) / 2, int> g;
+
+int work() {
+	int n, m, j;
+	scanf("%d", &n);
+	rep (i, n - 1) {
+		scanf("%d", &m);
+		rep (_, m) {
+			scanf("%d", &j);
+			g.add_edge(i, j - 1, i == 0 || j == n ? 1 : g.inf);
+		}
+	}
+
+	int ans = g.max_flow(0, n - 1);
+	g.clear();
+	return ans;
+}
+
+int main() {
+	int t;
+	scanf("%d", &t);
+	while (t--) printf("%d\n", work());
+	return 0;
+}
