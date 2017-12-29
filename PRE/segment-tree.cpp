@@ -1,74 +1,94 @@
 /*
- * General segment tree implementation
+ * This is an example of how one might set up a lazy segment tree which supports
+ * the following operations in logarithmic time:
+ *
+ *	1. Point update: set X[i] = x.
+ *
+ *	2. Range update: for k in {i, ..., j - 1}, add delta to X[i].
+ *
+ *	3. Range query: return sum(X[k] for k in {i, ..., j - 1}).
+ *
+ * N.B. The way the l and r child pointers are defined. Whenever SZ, the size of
+ * the range represented, is not a power of two, the 'standard' method of
+ * defining l and r as 2i and 2i + 1, respectively, leaves many gaps in the
+ * buffer array. At worst, the largest index may be around 4SZ, even though only
+ * 2SZ - 1 nodes are needed. In the following code, the l and r pointers are
+ * specifically defined to remove the gaps, while also keeping the tree balanced
+ * and only creating 2SZ - 1 nodes.
  */
 
-template <typename T, typename S>
-struct SegmentNode
-{
-SegmentNode * l, * r;
-int a, b;
-T sum;
-S lazy;
+template <int SZ>
+struct SegmentTree {
 
-virtual void add(S);
-virtual T plus(T, T), value();
-virtual S zero();
+struct Node {
+ll s, d;
 
-void push()
-{
-	l->add(lazy), r->add(lazy);
-	lazy = zero();
+#define decl_children \
+	Node *l = this + 1, *r = this + ((b - a) & -2); \
+	int c = (a + b) / 2
+
+inline void push(Node *l, Node *r) {
+	l->d += d, r->d += d;
+	d = 0;
 }
 
-void update(int i, int j, S x)
-{
-	if(j <= a || b <= i) return;
-	if(i <= a && b <= j)
-	{
-		add(x);
+inline ll get(int a, int b) { return s + (b - a) * d; }
+
+inline void collect(Node *l, Node *r, int a, int c, int b) {
+	s = l->get(a, c) + r->get(c, b);
+}
+
+void init(int a, int b) {
+	d = 0;
+	if (b - a == 1) {
+		s = 0;
 		return;
 	}
-	push();
-	l->update(i, j, x), r->update(i, j, x);
-	sum = plus(l->value(), r->value());
+	decl_children;
+	l->init(a, c), r->init(c, b);
+	collect(l, r, a, c, b);
 }
 
-T query(int i, int j)
-{
-	if(j <= a || b <= i) return T();
-	if(i <= a && b <= j) return value();
-	push();
-	T ans = plus(l->query(i, j), r->query(i, j));
-	sum = plus(l->value(), r->value());
+void set(int a, int b, int i, int v) {
+	if (i < a || b <= i) return;
+	if (i == a && b == i + 1) {
+		s = v, d = 0;
+		return;
+	}
+	decl_children;
+	push(l, r);
+	l->set(a, c, i, v), r->set(c, b, i, v);
+	collect(l, r, a, c, b);
+}
+
+void add(int a, int b, int i, int j, int v) {
+	if (j <= a || b <= i) return;
+	if (i <= a && b <= j) {
+		d += v;
+		return;
+	}
+	decl_children;
+	push(l, r);
+	l->add(a, c, i, j, v), r->add(c, b, i, j, v);
+	collect(l, r, a, c, b);
+}
+
+ll sum(int a, int b, int i, int j) {
+	if (j <= a || b <= i) return 0;
+	if (i <= a && b <= j) return get(a, b);
+	decl_children;
+	push(l, r);
+	ll ans = l->sum(a, c, i, j) + r->sum(c, b, i, j);
+	collect(l, r, a, c, b);
 	return ans;
 }
-
-SegmentNode * init(int i, int j)
-{
-	a = i, b = j, l = r = nullptr;
-	sum = T();
-	lazy = zero();
-	if(b - a == 1) return this + 1;
-	int c = (a + b) / 2;
-	return (r = (l = this + 1)->init(a, c))->init(c, b);
-}
 };
 
+int n;
+Node n0[2 * SZ];
 
-/*
- * Usage:
- */
-
-#define N 100005
-
-struct SumNode : public SegmentNode<ll, ll>
-{
-inline ll plus(ll x, ll y) { return x + y; }
-inline void add(ll x) { lazy += x; }
-inline ll value() { return sum + lazy * (b - a); }
-inline ll zero() { return 0; }
+void init(int n) { n0->init(0, this->n = n); }
+void set(int i, int v) { n0->set(0, n, i, v); }
+void add(int i, int j, int v) { n0->add(0, n, i, j, v); }
+ll sum(int i, int j) { return n0->sum(0, n, i, j); }
 };
-
-SumNode buf[2*N], * tree = buf;
-
-tree->init(0, N);

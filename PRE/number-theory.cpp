@@ -29,45 +29,41 @@ ll mod_pow(ll a, ll b) {
 }
 
 // Modulo inverse using exponentiation.
-// Note that this only works for prime moduli (due to Fermat's little theorem).
+// Note that this only works when MOD is prime (by Fermat's little theorem).
 ll mod_inv(ll a) {
 	return mod_pow(a, MOD - 2);
 }
 
-// The number of divisors grows rather slowly. For example, for all n <= 10^9,
-// d(n) <= 1344, where d(n) is the number of divisors of n. See
-// "count_number_factors.cpp" for more information.
-vll get_divisors(ll n) {
-	vll ans;
-	ll x = 1;
-	for (; x * x < n; x++) if (!(n % x)) ans.push_back(x), ans.push_back(n / x);
-	if (x * x == n) ans.push_back(x);
-	sort(all(ans));
-	return ans;
+template <typename It>
+int factorise(ll n, It f0) {
+	It f1 = f0;
+	for (ll p = 2; p * p <= n; p++) if (n % p == 0) {
+		int e = 0;
+		while (n % p == 0) n /= p, e++;
+		*(f1++) = {p, e};
+	}
+	if (n > 1) *(f1++) = {n, 1};
+	return f1 - f0;
 }
 
-vector<pair<ll, int>> factorise(ll n) {
-	vector<pair<ll, int>> ans;
-	for (ll f = 2; f * f <= n; f++) if (!(n % f)) {
-		int p = 0;
-		while (!(n % f)) n /= f, p++;
-		ans.emplace_back(f, p);
-	}
-	if (n > 1) ans.emplace_back(n, 1);
-	return ans;
+template <typename It>
+int divisors(ll n, It d0) {
+	ll d = 1, *d1 = d0;
+	for (; d * d < n; d++) if (n % d == 0) *(d1++) = d, *(d1++) = n / d;
+	if (d * d == n) *(d1++) = d;
+	sort(d0, d1);
+	return d1 - d0;
 }
 
 // A modified sieve of Eratosthenes which generates the smallest prime factor
 // of each integer in [0, ..., n - 1]. This lookup allows us to factorise x
 // in O(f), where f is the number of factors of x.
-vi smallest_factor(int n) {
-	vi ans(n);
-	for (int p = 2; p * p < n; p++) if (!ans[p]) {
-		ans[p] = p;
-		for (int q = p * p; q < n; q += p)
-			ans[q] = p;
+template <typename It>
+void smallest_prime_factors(int n, It f) {
+	for (int p = 2; p * p < n; p++) if (!f[p]) {
+		f[p] = p;
+		for (int q = p * p; q < n; q += p) f[q] = p;
 	}
-	return ans;
 }
 
 // This not a function, but rather a technique for computing
