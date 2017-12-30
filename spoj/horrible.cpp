@@ -1,12 +1,11 @@
-/*
- * This is an example of how one might set up a lazy segment tree which supports
- * the following operations in logarithmic time:
- *
- *	1. Range update: for k in {i, ..., j - 1}, add delta to X[i].
- *
- *	2. Range query: return sum(X[k] for k in {i, ..., j - 1}).
- */
+#include <cstdio>
+#include <utility>
 
+using namespace std;
+
+using ll = long long;
+#define range(i,a,b) for(auto i=(a);i<(b);i++)
+#define rep(i,n) range(i,0,n)
 #define rq(x) query<decltype(&Node::x),&Node::x>
 
 template <typename T, int SZ>
@@ -62,3 +61,33 @@ inline ll get(int a, int b) { return s + (b - a) * d; }
 inline void add(int a, int b, int v) { d += v; }
 inline void sum(int a, int b, ll &s) { s += get(a, b); }
 };
+
+constexpr int N = 100005;
+
+SegmentTree<Node, N> tree;
+
+void work() {
+	int n, c, t, i, j, v;
+	ll s;
+	scanf("%d%d", &n, &c);
+	tree.init(n);
+	while (c--) {
+		scanf("%d%d%d", &t, &i, &j);
+		i--;
+		if (t == 0) {
+			scanf("%d", &v);
+			tree.rq(add)(i, j, v);
+		} else {
+			s = 0;
+			tree.rq(sum)(i, j, s);
+			printf("%lld\n", s);
+		}
+	}
+}
+
+int main() {
+	int t;
+	scanf("%d", &t);
+	while (t--) work();
+	return 0;
+}
