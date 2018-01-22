@@ -2,7 +2,7 @@
  * This is an example of how one might set up a lazy segment tree which supports
  * the following operations in logarithmic time:
  *
- *	1. Range update: for k in {i, ..., j - 1}, add delta to X[i].
+ *	1. Range update: for k in {i, ..., j - 1}, add delta to X[k].
  *
  *	2. Range query: return sum(X[k] for k in {i, ..., j - 1}).
  */
