@@ -6,9 +6,9 @@
  *
  *   2. Merge two subsets.
  *
- * Each subset is represented by a tree, and the par array maps each element to
- * its parent within the subset. For the root element, par stores the size of
- * the subset. Each subset may be uniquely indexed by its root element.
+ * Each subset is represented by a tree, and the p array maps each element to
+ * its parent within the subset. For the root element, p stores the size of its
+ * subset. Each subset may be uniquely indexed by its root element.
  *
  * The merging and querying operations exploit this tree structure and also
  * simultaneously compress the trees for better performance. The amortised
@@ -20,22 +20,21 @@
 
 template <int SZ>
 struct UnionFind {
-int par[SZ];
+int p[SZ];
 
-void clear() { clr1(par); }
-UnionFind() { clear(); }
+UnionFind() { clr1(p); }
 
 int find(int x) {
 	int y = x;
-	while (par[y] >= 0) y = par[y];
-	while (par[x] >= 0) tie(x, par[x]) = tup(par[x], y);
+	while (p[y] >= 0) y = p[y];
+	while (p[x] >= 0) tie(x, p[x]) = tup(p[x], y);
 	return y;
 }
 
 void merge(int x, int y) {
 	x = find(x), y = find(y);
 	if (x == y) return;
-	if (par[x] > par[y]) swap(x, y);
-	par[x] += par[y], par[y] = x;
+	if (p[x] > p[y]) swap(x, y);
+	p[x] += p[y], p[y] = x;
 }
 };

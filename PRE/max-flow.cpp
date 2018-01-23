@@ -12,11 +12,6 @@ void add_edge(int i, int j, T c = 1) {
 	g[j].push_back(e1); *(e1++) = {i, 0, 0};
 }
 
-void clear() {
-	e1 = e0;
-	rep (i, V) g[i].clear();
-}
-
 T max_flow(int s, int t) {
 	T ans = 0;
 	while (bfs(s, t)) {
