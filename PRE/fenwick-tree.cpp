@@ -12,7 +12,7 @@
  * http://math-porn.tumblr.com/post/93129714459/range-queries-and-fenwick-trees
  *
  * Quick usage notes and gotchas:
- * 
+ *
  *   * Fenwick tree indices are 1-based.
  */
 
