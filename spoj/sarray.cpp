@@ -1,88 +1,99 @@
 #include <cstdio>
+#include <tuple>
 
 using namespace std;
 
-// Note: O( N ) implementation -- optimised to get full credit on SPOJ.
+#define range(i,a,b) for(auto i=(a);i<(b);i++)
+#define rep(i,n) range(i,0,n)
+#define tup make_tuple
 
-#define N 100005
+template <int SZ>
+struct SuffixArray {
 
-char buf[N];
+int *suf;
 
-inline bool lt( int a0, int a1, int b0, int b1 ) { return a0 < b0 || ( a0 == b0 && a1 < b1 ); }
-inline bool lt( int a0, int a1, int a2, int b0, int b1, int b2 ) { return a0 < b0 || ( a0 == b0 && lt( a1, a2, b1, b2 ) ); }
-
-void radix_sort( int * suf, int * ans, int * s, int n, int rad )
-{
-	int * c = new int[rad+1], i;
-	for( i = 0; i <= rad; i++ ) c[i] = 0;
-	for( i = 0; i < n; i++ ) c[s[suf[i]]]++;
-	for( i = 0; i < rad; i++ ) c[i+1] += c[i];
-	for( i = n - 1; i >= 0; i-- ) ans[--c[s[suf[i]]]] = suf[i];
-	delete[] c;
+template <typename T>
+void process(T s0, T s1) {
+	int n = s1 - s0, r = 0, *buf = _buf, *s = alloc(buf, n + 3);
+	suf = alloc(buf, n);
+	for (int *t = s; s0 != s1; s0++, t++) r = max(r, (*t = *s0 + 1));
+	s[n] = s[n + 1] = s[n + 2] = 0;
+	rec(s, suf, n, r + 1, buf);
 }
 
-// Computes suffix array for s[0,...,n-1] as ans.
-// Note: It is required that s[n] = s[n+1] = s[n+2] = 0, and 1 <= s[i] <= rad otherwise.
-void suffix_array( int * s, int * ans, int n, int rad )
-{
-	int n0 = ( n + 2 ) / 3, n2 = n / 3, nx = n0 + n2, i, j, k;
-	int * a = new int[n0+nx+3], * b = new int[n0+nx], * ax = a + n0, * bx = b + n0;
-	a[n] = a[n+1] = a[n+2] = 0;
- 
-	// sort suffixes that are 1 or 2 mod 3
-	for( i = 0; i < n0; i++ ) ax[i] = 3 * i + 1;
-	for( i = 0; i < n2; i++ ) ax[i+n0] = 3 * i + 2;
-	radix_sort( ax, bx, s+2, nx, rad );
-	radix_sort( bx, ax, s+1, nx, rad );
-	radix_sort( ax, bx, s, nx, rad );
+private:
+int _buf[6 * SZ + 50];
 
-	// compute ord numbers for suffixes
-	int ord = 0, c0 = -1, c1 = -1, c2 = -1;
-	for( i = 0; i < nx; i++ )
-	{
-		j = bx[i];
-		if( s[j] != c0 || s[j+1] != c1 || s[j+2] != c2 ) ord++, c0 = s[j], c1 = s[j+1], c2 = s[j+2];
-		ax[ j / 3 + ( j % 3 == 2 ) * n0 ] = ord;
-	}
-
-	// if ords aren't unique, recurse and recompute a/b
-	if( ord < nx )
-	{
-		suffix_array( ax, bx, nx, ord );
-		for( i = 0; i < nx; i++ ) ax[bx[i]] = i + 1, bx[i] = bx[i] < n0 ? 3 * bx[i] + 1 : 3 * ( bx[i] - n0 ) + 2;
-	}
-
-	// sort mod 0 suffixes based on first character and mod 1 suffixes
-	for( i = 0, j = 0; i < nx; i++ ) if( bx[i] % 3 == 1 ) a[j++] = bx[i] - 1;
-	radix_sort( a, b, s, n0, rad );
-
-	// merge sorted suffixes from b and bx
-	i = 0, j = n % 3 == 1, k = 0;
-	while( i < n0 && j < nx )
-	{
-		int u = b[i], v = bx[j];
-		if( v % 3 == 1 ?
-			lt( s[u], ax[u/3], s[v], ax[v/3+n0] ) :
-			lt( s[u], s[u+1], ax[u/3+n0], s[v], s[v+1], ax[v/3+1] )
-		)
-			ans[k++] = u, i++;
-		else ans[k++] = v, j++;
-	}
-	while( i < n0 ) ans[k++] = b[i++];
-	while( j < nx ) ans[k++] = bx[j++];
-
-	delete[] a, delete[] b; 
+inline int *alloc(int *(&buf), int sz) {
+	int *a = buf;
+	buf += sz;
+	return a;
 }
 
-int main()
-{
-	scanf( "%s", buf );
-	int n;
-	for( n = 0; buf[n]; n++ );
-	int * s = new int[n+3], * ans = new int[n];
-	for( int i = 0; i < n; i++ ) s[i] = buf[i];
-	for( int i = 0; i < 3; i++ ) s[n+i] = 0;
-	suffix_array( s, ans, n, 128 );
-	for( int i = 0; i < n; i++ ) printf( "%d\n", ans[i] );
+void radix_sort(int *s, int *suf0, int *suf1, int m, int r, int *c) {
+	rep (i, r) c[i] = 0;
+	rep (i, m) c[s[suf0[i]]]++;
+	int t = 0;
+	rep (i, r) tie(c[i], t) = tup(t, t + c[i]);
+	rep (i, m) suf1[c[s[suf0[i]]]++] = suf0[i];
+}
+
+void rec(int *s, int *suf, int n, int r, int *buf) {
+	int n0 = (n + 2) / 3, n2 = n / 3, nx = n0 + n2;
+	int *ax = alloc(buf, nx + 3), *bx = alloc(buf, nx);
+	ax[nx] = ax[nx + 1] = ax[nx + 2] = 0;
+
+	int *a1 = ax, *a2 = ax + n0;
+	rep (i, n0) a1[i] = 3 * i + 1;
+	rep (i, n2) a2[i] = 3 * i + 2;
+	radix_sort(s + 2, ax, bx, nx, r, buf);
+	radix_sort(s + 1, bx, ax, nx, r, buf);
+	radix_sort(s, ax, bx, nx, r, buf);
+
+	int ord = 0;
+	auto x = tup(-1, -1, -1);
+	range (b, bx, bx + nx) {
+		auto y = tup(s[*b], s[*b + 1], s[*b + 2]);
+		if (y > x) ord++, x = y;
+		(*b % 3 == 1 ? a1 : a2)[*b / 3] = ord;
+	}
+
+	if (ord < nx) {
+		rec(ax, bx, nx, ord + 1, buf);
+		rep (i, nx) {
+			ax[bx[i]] = i + 1;
+			bx[i] = bx[i] < n0 ? 3 * bx[i] + 1 : 3 * (bx[i] - n0) + 2;
+		}
+	}
+
+	int *a0 = alloc(buf, n0), *b0 = alloc(buf, n0);
+	ord = 0;
+	range (b, bx, bx + nx) if (*b % 3 == 1) a0[ord++] = *b - 1;
+	radix_sort(s, a0, b0, n0, r, buf);
+
+	int *e0 = b0 + n0, *ex = bx + nx;
+	bx += n % 3 == 1;
+	while (b0 < e0 && bx < ex)
+		*(suf++) = (
+			*bx % 3 == 1
+			? tup(s[*b0], a1[*b0 / 3]) < tup(s[*bx], a2[*bx / 3])
+			: tup(s[*b0], s[*b0 + 1], a2[*b0 / 3]) < tup(s[*bx], s[*bx + 1], a1[*bx / 3 + 1])
+		) ? *b0++ : *bx++;
+	while (b0 < e0) *(suf++) = *b0++;
+	while (bx < ex) *(suf++) = *bx++;
+}
+};
+
+constexpr int N = 100005;
+
+char s[N];
+SuffixArray<N> sa;
+
+int main() {
+	scanf("%s", s);
+	int n = 0;
+	while (s[n]) n++;
+	sa.process(s, s + n);
+	rep (i, n) printf("%d\n", sa.suf[i]);
 	return 0;
 }
