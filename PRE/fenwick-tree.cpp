@@ -5,7 +5,6 @@
  *
  *   2. Sum up all the elements in a subrange of the list.
  *
- *
  * It guarantees O(log N) performance on either operation by cleverly using bit
  * operations and some number-theoretic tricks. For this reason, it is also
  * called a binary-indexed tree, or BIT. For more information, see here:

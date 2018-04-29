@@ -23,6 +23,17 @@
  *
  *   3. exts ('extensions') is the reverse of the suffix links. If class u is
  *      the suffix of class v, then u.exts includes v.
+ *
+ * Many problems can be solved by recursively traversing either the next
+ * character edges or the extensions. For example, if I wanted to compute the
+ * last occurrence of an equivalence class, I could either:
+ *
+ *   1. Take the maximum over all next characters and subtract one. The base
+ *      case is a terminal string, whose last occurrence is at the end of
+ *      the string.
+ *
+ *   2. Take the maximum over all extensions. The base case is a string with no
+ *      extensions, whose last occurrence is just its first occurrence.
  */
 
 template <int SZ, int C>
