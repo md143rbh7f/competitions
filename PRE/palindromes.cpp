@@ -97,7 +97,7 @@ void process(It s, It t) {
 template <int SZ, int C=26>
 struct PalindromeTree  {
 struct Node {
-	Node * next[C], * suf;
+	Node *next[C], *suf;
 	int len;
 };
 
@@ -109,25 +109,25 @@ void process(It s, It t) {
 	sz = 2;
 	nodes[0].len = -1, nodes[0].suf = nodes;
 	nodes[1].len = 0, nodes[1].suf = nodes;
-	Node * last = nodes + 1;
+	Node *last = nodes + 1;
 	int n = t - s;
 	rep (i, n) last = add_node(s, i, last);
 }
 
 private:
 template <typename It>
-Node * match(It s, int i, Node * last) {
+Node *match(It s, int i, Node *last) {
 	while (i - 1 - last->len < 0 || s[i - 1 - last->len] != s[i])
 		last = last->suf;
 	return last;
 }
 
 template <typename It>
-Node * add_node(It s, int i, Node * last) {
+Node *add_node(It s, int i, Node *last) {
 	last = match(s, i, last);
 	if (last->next[s[i]]) return last->next[s[i]];
 
-	Node * cur = nodes + (sz++);
+	Node *cur = nodes + (sz++);
 	cur->len = last->len + 2;
 	last->next[s[i]] = cur;
 

@@ -7,8 +7,6 @@
  *	2. Range query: return sum(X[k] for k in {i, ..., j - 1}).
  */
 
-#define rq(x) query<decltype(&Node::x),&Node::x>
-
 template <typename T, int SZ>
 struct SegmentTree {
 int n, i, j;
@@ -43,6 +41,8 @@ void query(int i, int j, A &&... _) {
 	rec<F, f>(p0, 0, n, forward<A>(_)...);
 }
 };
+
+#define rq(x) query<decltype(&Node::x),&Node::x>
 
 struct Node {
 ll s, d;
