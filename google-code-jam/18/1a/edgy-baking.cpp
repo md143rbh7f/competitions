@@ -21,11 +21,10 @@ inline double check(int lo, double hi) {
 	return -1;
 }
 
-double rec(int lvl, int n, int lo, double hi) {
-	double ans = check(lo, hi + (lvl == 3 ? sum[n] : 0));
-	if (lvl < 3) rep (i, n)
-		ans = max(ans, rec(lvl + 1, i, lo + cs[i].fst, hi + cs[i].snd));
-	return ans;
+double rec(int i, int lo, double hi) {
+	if (i < 0) return check(lo, hi);
+	if (lo + cs[i].fst < hi) return check(lo, hi + sum[i + 1]);
+	return max(rec(i - 1, lo, hi), rec(i - 1, lo + cs[i].fst, hi + cs[i].snd));
 }
 
 double work() {
@@ -41,7 +40,7 @@ double work() {
 	sort(cs, ce);
 	rep (i, n) sum[i + 1] = sum[i] + cs[i].snd;
 
-	return rec(0, n, have, have);
+	return rec(n - 1, have, have);
 }
 
 int main() {
