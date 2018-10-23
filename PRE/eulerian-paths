@@ -1,0 +1,49 @@
+Pseudocode for Hierholzer's algorithm for finding an Eulerian path (if it
+exists) for a connected component in a graph.
+
+The code is simple: DFS through nodes and from each node, traverse edges until
+no edges are left. When returning from a node, prepend it to the Eulerian path.
+
+Why prepend when returning instead of append when entering? Because appending
+can produce an incorrect sequence, but prepending will not. Specifically, note
+that recursive calls emanating from u can end in one of two ways:
+
+  1. The recursion eventually loops back to u and explores its remaining edges.
+
+  2. The recursion does not return to u and terminates elsewhere. In this case,
+     once the recursive call terminates, the function continues exploring other
+	 edges of u as in the case above.
+
+In the second case, we have a sequence of calls (u -> ... -> end) which does
+not terminate at u, potentially followed by a loop (u -> ... -> u) starting and
+ending at u. So appending nodes as they are entered will produce a disconnected
+sequence. Prepending nodes in reverse order will ensure that the loop correctly
+precedes the terminal sequence.
+
+Quick usage notes and caveats:
+
+  *  If the graph is undirected, you can append while returning instead of
+     prepend while returning.
+
+  *  Make sure that tour() is called on the proper vertex. If the path is a
+     cycle then it doesn't really matter, but if it's a non-cyclical path, then
+	 you need to check that the initial node has out-degree > in-degree (or odd
+     degree in the undirected case).
+
+  *  tour() can be easily modified to generate a sequence of edges instead of
+     vertices.
+
+
+function tour(u):
+	while edges[u] is not empty:
+		e = (u, v) = edges[u].pop()
+		if used[e]:
+			continue
+		used[e] = true
+		tour(v)
+	eulerian_path.prepend(u)
+
+for each node u:
+	if edges[u] is not empty:
+		# New connected component
+		tour(u)
