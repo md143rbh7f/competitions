@@ -6,7 +6,7 @@
  *
  *   2. Kasai's algorithm for computing the LCP array of the suffix array.
  *
- * Quick usage notes and gotchas:
+ * Quick usage notes and caveats:
  *
  *   * rec() requires that s[n] = s[n + 1] = s[n + 2] = 0, and otherwise
  *     1 <= s[i] < r. This makes the rest of the implementation easier.

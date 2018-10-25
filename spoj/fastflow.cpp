@@ -12,13 +12,14 @@ using ll = long long;
 #define CLR(i,x) memset(i,x,sizeof(i))
 #define clr1(i) CLR(i,-1)
 
-template <int V, int E, typename T>
+template <int V, typename T = int>
 struct MaxFlowGraph {
 T inf = numeric_limits<T>::max();
 
 void add_edge(int i, int j, T c = 1) {
-	g[i].push_back(e1); *(e1++) = {j, c, 0};
-	g[j].push_back(e1); *(e1++) = {i, c, 0};
+	Edge *e0 = new Edge{j, c, 0, nullptr}, *e1 = new Edge{i, c, 0, nullptr};
+	e0->r = e1, e1->r = e0;
+	g[i].push_back(e0), g[j].push_back(e1);
 }
 
 T max_flow(int s, int t) {
@@ -31,9 +32,8 @@ T max_flow(int s, int t) {
 }
 
 private:
-struct Edge { int j; T c, f; };
+struct Edge { int j; T c, f; Edge *r; };
 
-Edge e0[2 * E], *e1 = e0;
 vector<Edge*> g[V];
 int q0[V], d[V];
 typename vector<Edge*>::iterator p[V];
@@ -54,7 +54,7 @@ T dfs(int i, int t, T f) {
 		Edge *e = *p[i];
 		if (e->c == e->f || d[e->j] != d[i] + 1) continue;
 		T f2 = dfs(e->j, t, min(f, e->c - e->f));
-		e->f += f2, e0[(e - e0) ^ 1].f -= f2;
+		e->f += f2, e->r->f -= f2;
 		ans += f2, f -= f2;
 		if (!f) break;
 	}
@@ -62,9 +62,9 @@ T dfs(int i, int t, T f) {
 }
 };
 
-constexpr int N = 5005, M = 30005;
+constexpr int N = 5005;
 
-MaxFlowGraph<N, M, ll> g;
+MaxFlowGraph<N, ll> g;
 
 int main() {
 	int n, m, a, b, c;

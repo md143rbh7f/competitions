@@ -16,7 +16,7 @@
  *
  * The following code is largely based on e-maxx's article.
  *
- * Quick usage notes and gotchas:
+ * Quick usage notes and caveats:
  *
  *   * Obviously your vector needs to be of length 2^K for some K.
  *

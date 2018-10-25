@@ -15,7 +15,7 @@
  * been computed, and thus becomes a lower bound for the palindrome length of
  * the current position.
  *
- * Quick usage notes and gotchas:
+ * Quick usage notes and caveats:
  *
  *   * The length of the longest palindrome centered at s[i] is len[2 * i].
  *
@@ -89,7 +89,7 @@ void process(It s, It t) {
  *
  * The palindrome tree was invented by Mikhail Rubinchik.
  *
- * Quick usage notes and gotchas:
+ * Quick usage notes and caveats:
  *
  *   * The characters in the input string must be in the range 0, 1, ..., C - 1.
  */
