@@ -42,7 +42,7 @@ void query(int i, int j, A &&... _) {
 }
 };
 
-#define rq(x) query<decltype(&Node::x),&Node::x>
+#define rq(f) query<decltype(&Node::f),&Node::f>
 
 struct Node {
 ll s, d;
