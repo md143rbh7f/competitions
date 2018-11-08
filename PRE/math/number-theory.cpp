@@ -30,9 +30,7 @@ ll mod_pow(ll a, ll b) {
 
 // Modulo inverse using exponentiation.
 // Note that this only works when MOD is prime (by Fermat's little theorem).
-ll mod_inv(ll a) {
-	return mod_pow(a, MOD - 2);
-}
+ll mod_inv(ll a) { return mod_pow(a, MOD - 2); }
 
 template <typename It>
 int factorise(ll n, It f0) {
