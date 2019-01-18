@@ -4,6 +4,8 @@ import heapq
 from itertools import *
 from math import *
 #from functools import *
+#from decimal import *
+#getcontext().prec = 100
 import sys
 ## if t!
 

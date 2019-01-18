@@ -26,7 +26,13 @@ void process(T s0, T s1) {
 	rec(s, suf, n, r + 1, buf);
 
 	/*
-	// Compute LCP.
+	 * Compute LCP.
+	 *
+	 *   * lcp[i] is the length of the longest common prefix between the
+	 *     suffixes s[suf[i], ..., n] and s[suf[i + 1], ..., n].
+	 *
+	 *   * ord[i] is the order of the suffix s[i, ..., n].
+	 *
 	lcp = alloc(buf, n), ord = alloc(buf, n);
 	int l = 0;
 	rep (i, n) ord[suf[i]] = i;
